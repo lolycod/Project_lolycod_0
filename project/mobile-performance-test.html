@@ -1,0 +1,428 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>移动端性能测试</title>
+    <style>
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            margin: 0;
+            padding: 20px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            min-height: 100vh;
+        }
+        
+        .container {
+            max-width: 800px;
+            margin: 0 auto;
+            background: rgba(255, 255, 255, 0.1);
+            padding: 20px;
+            border-radius: 15px;
+            backdrop-filter: blur(10px);
+        }
+        
+        .test-section {
+            margin: 20px 0;
+            padding: 15px;
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 10px;
+            border-left: 4px solid #4CAF50;
+        }
+        
+        .metric {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin: 10px 0;
+            padding: 10px;
+            background: rgba(0, 0, 0, 0.2);
+            border-radius: 5px;
+        }
+        
+        .metric-name {
+            font-weight: bold;
+        }
+        
+        .metric-value {
+            font-family: 'Courier New', monospace;
+            color: #FFD700;
+        }
+        
+        .good { color: #4CAF50; }
+        .warning { color: #ff9800; }
+        .poor { color: #f44336; }
+        
+        button {
+            background: #4CAF50;
+            color: white;
+            border: none;
+            padding: 12px 24px;
+            border-radius: 5px;
+            cursor: pointer;
+            margin: 5px;
+            font-size: 16px;
+        }
+        
+        button:hover { background: #45a049; }
+        
+        .progress-bar {
+            width: 100%;
+            height: 20px;
+            background: rgba(255, 255, 255, 0.2);
+            border-radius: 10px;
+            overflow: hidden;
+            margin: 10px 0;
+        }
+        
+        .progress-fill {
+            height: 100%;
+            background: linear-gradient(90deg, #4CAF50, #8BC34A);
+            width: 0%;
+            transition: width 0.3s ease;
+        }
+        
+        .log {
+            background: rgba(0, 0, 0, 0.3);
+            padding: 15px;
+            border-radius: 5px;
+            font-family: 'Courier New', monospace;
+            font-size: 12px;
+            max-height: 300px;
+            overflow-y: auto;
+            margin-top: 15px;
+        }
+        
+        @media (max-width: 480px) {
+            .container {
+                padding: 10px;
+                margin: 10px;
+            }
+            
+            .metric {
+                flex-direction: column;
+                align-items: flex-start;
+                gap: 5px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>📱 移动端性能测试</h1>
+        
+        <div class="test-section">
+            <h2>📊 设备信息</h2>
+            <div id="device-info"></div>
+        </div>
+        
+        <div class="test-section">
+            <h2>🌐 网络状况</h2>
+            <div id="network-info"></div>
+        </div>
+        
+        <div class="test-section">
+            <h2>⚡ 页面性能</h2>
+            <div id="performance-metrics"></div>
+            <button onclick="runPerformanceTest()">运行性能测试</button>
+            <div class="progress-bar">
+                <div class="progress-fill" id="perf-progress"></div>
+            </div>
+        </div>
+        
+        <div class="test-section">
+            <h2>🔄 加载速度对比</h2>
+            <div id="load-comparison"></div>
+            <button onclick="compareLoadTimes()">对比加载速度</button>
+        </div>
+        
+        <div class="test-section">
+            <h2>💾 缓存测试</h2>
+            <div id="cache-test"></div>
+            <button onclick="testCaching()">测试缓存效果</button>
+        </div>
+        
+        <div class="test-section">
+            <h2>📝 测试日志</h2>
+            <div class="log" id="test-log"></div>
+            <button onclick="clearLog()">清空日志</button>
+            <button onclick="exportReport()">导出报告</button>
+        </div>
+    </div>
+
+    <script>
+        const testLog = [];
+        let testStartTime = performance.now();
+        
+        function log(message, type = 'info') {
+            const timestamp = new Date().toLocaleTimeString();
+            const logEntry = `[${timestamp}] ${message}`;
+            testLog.push(logEntry);
+            
+            const logElement = document.getElementById('test-log');
+            logElement.innerHTML += logEntry + '\n';
+            logElement.scrollTop = logElement.scrollHeight;
+            
+            console.log(logEntry);
+        }
+        
+        function clearLog() {
+            testLog.length = 0;
+            document.getElementById('test-log').innerHTML = '';
+        }
+        
+        function createMetric(name, value, unit = '', status = '') {
+            return `
+                <div class="metric">
+                    <span class="metric-name">${name}</span>
+                    <span class="metric-value ${status}">${value}${unit}</span>
+                </div>
+            `;
+        }
+        
+        function getDeviceInfo() {
+            const info = {
+                userAgent: navigator.userAgent,
+                platform: navigator.platform,
+                language: navigator.language,
+                cookieEnabled: navigator.cookieEnabled,
+                onLine: navigator.onLine,
+                screenWidth: screen.width,
+                screenHeight: screen.height,
+                viewportWidth: window.innerWidth,
+                viewportHeight: window.innerHeight,
+                devicePixelRatio: window.devicePixelRatio,
+                colorDepth: screen.colorDepth,
+                pixelDepth: screen.pixelDepth
+            };
+            
+            const isMobile = /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent);
+            const isTablet = /iPad|Android(?=.*\bMobile\b)/i.test(navigator.userAgent);
+            
+            let html = '';
+            html += createMetric('设备类型', isMobile ? (isTablet ? '平板' : '手机') : '桌面');
+            html += createMetric('屏幕尺寸', `${info.screenWidth}×${info.screenHeight}`);
+            html += createMetric('视口尺寸', `${info.viewportWidth}×${info.viewportHeight}`);
+            html += createMetric('像素比', info.devicePixelRatio);
+            html += createMetric('颜色深度', info.colorDepth, 'bit');
+            html += createMetric('平台', info.platform);
+            html += createMetric('语言', info.language);
+            html += createMetric('在线状态', info.onLine ? '在线' : '离线', '', info.onLine ? 'good' : 'poor');
+            
+            document.getElementById('device-info').innerHTML = html;
+            
+            log(`设备信息检测完成: ${isMobile ? '移动设备' : '桌面设备'}`);
+        }
+        
+        function getNetworkInfo() {
+            let html = '';
+            
+            if (navigator.connection) {
+                const conn = navigator.connection;
+                const effectiveType = conn.effectiveType;
+                const downlink = conn.downlink;
+                const rtt = conn.rtt;
+                
+                let speedStatus = 'good';
+                if (effectiveType === 'slow-2g' || effectiveType === '2g') {
+                    speedStatus = 'poor';
+                } else if (effectiveType === '3g') {
+                    speedStatus = 'warning';
+                }
+                
+                html += createMetric('网络类型', effectiveType.toUpperCase(), '', speedStatus);
+                html += createMetric('下载速度', downlink, ' Mbps', downlink > 1.5 ? 'good' : 'warning');
+                html += createMetric('往返时延', rtt, ' ms', rtt < 100 ? 'good' : rtt < 300 ? 'warning' : 'poor');
+                html += createMetric('数据节省', conn.saveData ? '开启' : '关闭');
+                
+                log(`网络状况: ${effectiveType}, 下载速度: ${downlink}Mbps, RTT: ${rtt}ms`);
+            } else {
+                html += createMetric('网络信息', '不可用', '', 'warning');
+                log('网络信息API不可用');
+            }
+            
+            document.getElementById('network-info').innerHTML = html;
+        }
+        
+        function runPerformanceTest() {
+            log('开始性能测试...');
+            const progressBar = document.getElementById('perf-progress');
+            
+            let progress = 0;
+            const updateProgress = (value) => {
+                progress = value;
+                progressBar.style.width = `${progress}%`;
+            };
+            
+            updateProgress(10);
+            
+            // 获取性能指标
+            const timing = performance.timing;
+            const navigation = performance.navigation;
+            
+            updateProgress(30);
+            
+            // 计算各项指标
+            const metrics = {
+                dns: timing.domainLookupEnd - timing.domainLookupStart,
+                tcp: timing.connectEnd - timing.connectStart,
+                request: timing.responseStart - timing.requestStart,
+                response: timing.responseEnd - timing.responseStart,
+                domParsing: timing.domInteractive - timing.responseEnd,
+                domReady: timing.domContentLoadedEventEnd - timing.navigationStart,
+                pageLoad: timing.loadEventEnd - timing.navigationStart,
+                firstPaint: 0,
+                firstContentfulPaint: 0
+            };
+            
+            updateProgress(60);
+            
+            // 获取Paint Timing
+            if (performance.getEntriesByType) {
+                const paintEntries = performance.getEntriesByType('paint');
+                paintEntries.forEach(entry => {
+                    if (entry.name === 'first-paint') {
+                        metrics.firstPaint = entry.startTime;
+                    } else if (entry.name === 'first-contentful-paint') {
+                        metrics.firstContentfulPaint = entry.startTime;
+                    }
+                });
+            }
+            
+            updateProgress(80);
+            
+            // 显示结果
+            let html = '';
+            html += createMetric('DNS查询', metrics.dns, ' ms', metrics.dns < 50 ? 'good' : metrics.dns < 200 ? 'warning' : 'poor');
+            html += createMetric('TCP连接', metrics.tcp, ' ms', metrics.tcp < 100 ? 'good' : metrics.tcp < 300 ? 'warning' : 'poor');
+            html += createMetric('请求时间', metrics.request, ' ms', metrics.request < 200 ? 'good' : metrics.request < 500 ? 'warning' : 'poor');
+            html += createMetric('响应时间', metrics.response, ' ms', metrics.response < 500 ? 'good' : metrics.response < 1000 ? 'warning' : 'poor');
+            html += createMetric('DOM解析', metrics.domParsing, ' ms', metrics.domParsing < 500 ? 'good' : metrics.domParsing < 1000 ? 'warning' : 'poor');
+            html += createMetric('DOM就绪', metrics.domReady, ' ms', metrics.domReady < 1000 ? 'good' : metrics.domReady < 2000 ? 'warning' : 'poor');
+            html += createMetric('页面加载', metrics.pageLoad, ' ms', metrics.pageLoad < 2000 ? 'good' : metrics.pageLoad < 4000 ? 'warning' : 'poor');
+            
+            if (metrics.firstPaint > 0) {
+                html += createMetric('首次绘制', metrics.firstPaint.toFixed(0), ' ms', metrics.firstPaint < 1000 ? 'good' : metrics.firstPaint < 2000 ? 'warning' : 'poor');
+            }
+            if (metrics.firstContentfulPaint > 0) {
+                html += createMetric('首次内容绘制', metrics.firstContentfulPaint.toFixed(0), ' ms', metrics.firstContentfulPaint < 1500 ? 'good' : metrics.firstContentfulPaint < 3000 ? 'warning' : 'poor');
+            }
+            
+            document.getElementById('performance-metrics').innerHTML = html;
+            
+            updateProgress(100);
+            
+            log(`性能测试完成 - 页面加载: ${metrics.pageLoad}ms, DOM就绪: ${metrics.domReady}ms`);
+        }
+        
+        function compareLoadTimes() {
+            log('开始加载速度对比测试...');
+            
+            const testUrls = [
+                { name: '桌面版about页面', url: 'about.html' },
+                { name: '移动版about页面', url: 'about-mobile.html' }
+            ];
+            
+            let html = '<h3>加载时间对比</h3>';
+            
+            Promise.all(testUrls.map(testUrl => {
+                return new Promise((resolve) => {
+                    const startTime = performance.now();
+                    const img = new Image();
+                    
+                    img.onload = img.onerror = () => {
+                        const loadTime = performance.now() - startTime;
+                        resolve({ name: testUrl.name, time: loadTime });
+                    };
+                    
+                    // 使用图片预加载来测试页面响应时间
+                    img.src = testUrl.url + '?t=' + Date.now();
+                });
+            })).then(results => {
+                results.forEach(result => {
+                    const status = result.time < 500 ? 'good' : result.time < 1000 ? 'warning' : 'poor';
+                    html += createMetric(result.name, result.time.toFixed(0), ' ms', status);
+                });
+                
+                document.getElementById('load-comparison').innerHTML = html;
+                log('加载速度对比完成');
+            });
+        }
+        
+        function testCaching() {
+            log('开始缓存测试...');
+            
+            const cacheTests = [
+                { name: 'LocalStorage可用', test: () => typeof localStorage !== 'undefined' },
+                { name: 'SessionStorage可用', test: () => typeof sessionStorage !== 'undefined' },
+                { name: 'IndexedDB可用', test: () => typeof indexedDB !== 'undefined' },
+                { name: 'Cache API可用', test: () => typeof caches !== 'undefined' },
+                { name: 'Service Worker支持', test: () => 'serviceWorker' in navigator }
+            ];
+            
+            let html = '';
+            
+            cacheTests.forEach(test => {
+                const result = test.test();
+                html += createMetric(test.name, result ? '支持' : '不支持', '', result ? 'good' : 'warning');
+            });
+            
+            // 测试存储容量
+            if (navigator.storage && navigator.storage.estimate) {
+                navigator.storage.estimate().then(estimate => {
+                    const used = estimate.usage || 0;
+                    const quota = estimate.quota || 0;
+                    const usedMB = (used / 1024 / 1024).toFixed(2);
+                    const quotaMB = (quota / 1024 / 1024).toFixed(2);
+                    
+                    html += createMetric('已用存储', usedMB, ' MB');
+                    html += createMetric('存储配额', quotaMB, ' MB');
+                    
+                    document.getElementById('cache-test').innerHTML = html;
+                    log(`缓存测试完成 - 已用: ${usedMB}MB, 配额: ${quotaMB}MB`);
+                });
+            } else {
+                document.getElementById('cache-test').innerHTML = html;
+                log('缓存测试完成');
+            }
+        }
+        
+        function exportReport() {
+            const report = {
+                timestamp: new Date().toISOString(),
+                userAgent: navigator.userAgent,
+                testLog: testLog,
+                performance: performance.timing,
+                network: navigator.connection || {},
+                screen: {
+                    width: screen.width,
+                    height: screen.height,
+                    colorDepth: screen.colorDepth
+                }
+            };
+            
+            const blob = new Blob([JSON.stringify(report, null, 2)], { type: 'application/json' });
+            const url = URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = `mobile-performance-report-${Date.now()}.json`;
+            a.click();
+            URL.revokeObjectURL(url);
+            
+            log('性能报告已导出');
+        }
+        
+        // 页面加载时自动运行基础测试
+        window.addEventListener('DOMContentLoaded', function() {
+            log('移动端性能测试页面加载完成');
+            
+            setTimeout(() => {
+                getDeviceInfo();
+                getNetworkInfo();
+                runPerformanceTest();
+            }, 1000);
+        });
+    </script>
+</body>
+</html>

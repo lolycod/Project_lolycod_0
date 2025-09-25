@@ -1,0 +1,11 @@
+User-agent: *
+Allow: /
+
+# Sitemap
+Sitemap: https://lolycod123.icu/sitemap.xml
+
+# 禁止访问敏感文件
+Disallow: /*.log$
+Disallow: /*.txt$
+Disallow: /js/
+Disallow: /css/

@@ -1,0 +1,387 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>设备检测测试</title>
+    <style>
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            margin: 0;
+            padding: 20px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            min-height: 100vh;
+        }
+        
+        .container {
+            max-width: 1000px;
+            margin: 0 auto;
+            background: rgba(255, 255, 255, 0.1);
+            padding: 20px;
+            border-radius: 15px;
+            backdrop-filter: blur(10px);
+        }
+        
+        .detection-result {
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 10px;
+            padding: 20px;
+            margin: 20px 0;
+        }
+        
+        .result-header {
+            font-size: 1.5rem;
+            margin-bottom: 15px;
+            color: #FFD700;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        
+        .confidence-bar {
+            width: 100%;
+            height: 20px;
+            background: rgba(255, 255, 255, 0.2);
+            border-radius: 10px;
+            overflow: hidden;
+            margin: 10px 0;
+        }
+        
+        .confidence-fill {
+            height: 100%;
+            background: linear-gradient(90deg, #f44336, #ff9800, #4CAF50);
+            transition: width 0.3s ease;
+        }
+        
+        .info-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 15px;
+            margin: 20px 0;
+        }
+        
+        .info-card {
+            background: rgba(0, 0, 0, 0.2);
+            border-radius: 8px;
+            padding: 15px;
+        }
+        
+        .info-title {
+            font-weight: bold;
+            color: #FFD700;
+            margin-bottom: 10px;
+        }
+        
+        .info-item {
+            display: flex;
+            justify-content: space-between;
+            margin: 5px 0;
+            font-size: 0.9rem;
+        }
+        
+        .info-label {
+            opacity: 0.8;
+        }
+        
+        .info-value {
+            font-family: 'Courier New', monospace;
+            color: #4CAF50;
+        }
+        
+        .reasons-list {
+            background: rgba(0, 0, 0, 0.2);
+            border-radius: 8px;
+            padding: 15px;
+            margin: 15px 0;
+        }
+        
+        .reason-item {
+            padding: 5px 0;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+        }
+        
+        .reason-item:last-child {
+            border-bottom: none;
+        }
+        
+        button {
+            background: #4CAF50;
+            color: white;
+            border: none;
+            padding: 12px 24px;
+            border-radius: 5px;
+            cursor: pointer;
+            margin: 5px;
+            font-size: 16px;
+        }
+        
+        button:hover { background: #45a049; }
+        
+        .status-indicator {
+            display: inline-block;
+            width: 12px;
+            height: 12px;
+            border-radius: 50%;
+            margin-right: 8px;
+        }
+        
+        .status-mobile { background: #4CAF50; }
+        .status-tablet { background: #ff9800; }
+        .status-desktop { background: #2196F3; }
+        
+        .debug-panel {
+            position: fixed;
+            bottom: 20px;
+            right: 20px;
+            background: rgba(0, 0, 0, 0.9);
+            color: white;
+            padding: 15px;
+            border-radius: 8px;
+            font-family: monospace;
+            font-size: 12px;
+            max-width: 300px;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+        }
+        
+        @media (max-width: 768px) {
+            .container {
+                padding: 10px;
+                margin: 10px;
+            }
+            
+            .info-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>🔍 设备检测测试</h1>
+        <p>测试精确设备检测算法的准确性和可靠性</p>
+        
+        <div class="detection-result" id="detectionResult">
+            <div class="result-header">
+                <span class="status-indicator" id="statusIndicator"></span>
+                <span id="deviceType">检测中...</span>
+            </div>
+            
+            <div>
+                <strong>检测置信度:</strong>
+                <div class="confidence-bar">
+                    <div class="confidence-fill" id="confidenceFill"></div>
+                </div>
+                <div style="text-align: center; margin-top: 5px;">
+                    <span id="confidenceText">0%</span>
+                </div>
+            </div>
+        </div>
+        
+        <div class="info-grid">
+            <div class="info-card">
+                <div class="info-title">📱 设备信息</div>
+                <div id="deviceInfo"></div>
+            </div>
+            
+            <div class="info-card">
+                <div class="info-title">📺 屏幕信息</div>
+                <div id="screenInfo"></div>
+            </div>
+            
+            <div class="info-card">
+                <div class="info-title">🌐 网络信息</div>
+                <div id="networkInfo"></div>
+            </div>
+            
+            <div class="info-card">
+                <div class="info-title">🔧 硬件信息</div>
+                <div id="hardwareInfo"></div>
+            </div>
+        </div>
+        
+        <div class="reasons-list">
+            <div class="info-title">🧠 检测依据</div>
+            <div id="reasonsList"></div>
+        </div>
+        
+        <div style="text-align: center; margin: 30px 0;">
+            <button onclick="runDetection()">🔄 重新检测</button>
+            <button onclick="showDebugPanel()">🐛 显示调试面板</button>
+            <button onclick="exportResults()">📊 导出结果</button>
+            <button onclick="testRedirect()">🔀 测试重定向逻辑</button>
+        </div>
+        
+        <div id="redirectTest" style="display: none;">
+            <h3>🔀 重定向测试结果</h3>
+            <div id="redirectResult"></div>
+        </div>
+    </div>
+
+    <!-- 引入设备检测器 -->
+    <script src="device-detector.js"></script>
+    <script src="mobile-redirect.js"></script>
+
+    <script>
+        let currentDetection = null;
+        
+        function createInfoItem(label, value) {
+            return `
+                <div class="info-item">
+                    <span class="info-label">${label}:</span>
+                    <span class="info-value">${value}</span>
+                </div>
+            `;
+        }
+        
+        function runDetection() {
+            console.log('🔍 开始设备检测...');
+            
+            // 强制重新检测
+            if (window.DeviceDetector) {
+                currentDetection = window.DeviceDetector.refresh();
+                const network = window.DeviceDetector.getNetworkInfo();
+                
+                displayResults(currentDetection, network);
+            } else {
+                document.getElementById('detectionResult').innerHTML = `
+                    <div class="result-header">
+                        <span class="status-indicator" style="background: #f44336;"></span>
+                        <span>设备检测器未加载</span>
+                    </div>
+                `;
+            }
+        }
+        
+        function displayResults(device, network) {
+            // 更新主要结果
+            const statusIndicator = document.getElementById('statusIndicator');
+            const deviceTypeElement = document.getElementById('deviceType');
+            const confidenceFill = document.getElementById('confidenceFill');
+            const confidenceText = document.getElementById('confidenceText');
+            
+            // 设置状态指示器
+            statusIndicator.className = `status-indicator status-${device.type}`;
+            
+            // 设置设备类型
+            const typeText = device.type === 'mobile' ? '📱 移动设备' :
+                           device.type === 'tablet' ? '📱 平板设备' : '🖥️ 桌面设备';
+            deviceTypeElement.textContent = typeText;
+            
+            // 设置置信度
+            confidenceFill.style.width = `${device.confidence}%`;
+            confidenceText.textContent = `${device.confidence}%`;
+            
+            // 设备信息
+            document.getElementById('deviceInfo').innerHTML = `
+                ${createInfoItem('设备类型', device.type)}
+                ${createInfoItem('是否移动设备', device.isMobile ? '是' : '否')}
+                ${createInfoItem('是否平板', device.isTablet ? '是' : '否')}
+                ${createInfoItem('是否桌面', device.isDesktop ? '是' : '否')}
+                ${createInfoItem('用户代理', navigator.userAgent.substring(0, 50) + '...')}
+                ${createInfoItem('平台', navigator.platform)}
+            `;
+            
+            // 屏幕信息
+            document.getElementById('screenInfo').innerHTML = `
+                ${createInfoItem('屏幕尺寸', `${device.details.screen.width}×${device.details.screen.height}`)}
+                ${createInfoItem('可用尺寸', `${device.details.screen.availWidth}×${device.details.screen.availHeight}`)}
+                ${createInfoItem('视口尺寸', `${device.details.viewport.width}×${device.details.viewport.height}`)}
+                ${createInfoItem('像素比', device.details.screen.devicePixelRatio)}
+                ${createInfoItem('颜色深度', device.details.screen.colorDepth + 'bit')}
+            `;
+            
+            // 网络信息
+            document.getElementById('networkInfo').innerHTML = `
+                ${createInfoItem('在线状态', network.isOnline ? '在线' : '离线')}
+                ${createInfoItem('网络类型', network.effectiveType)}
+                ${createInfoItem('下载速度', network.downlink + ' Mbps')}
+                ${createInfoItem('往返时延', network.rtt + ' ms')}
+                ${createInfoItem('慢速连接', network.isSlowConnection ? '是' : '否')}
+                ${createInfoItem('数据节省', network.saveData ? '开启' : '关闭')}
+            `;
+            
+            // 硬件信息
+            document.getElementById('hardwareInfo').innerHTML = `
+                ${createInfoItem('CPU核心数', device.details.hardware.concurrency)}
+                ${createInfoItem('内存大小', device.details.hardware.memory + ' GB')}
+                ${createInfoItem('触摸支持', device.details.touch.supported ? '支持' : '不支持')}
+                ${createInfoItem('最大触摸点', device.details.touch.maxTouchPoints)}
+            `;
+            
+            // 检测依据
+            const reasonsList = document.getElementById('reasonsList');
+            reasonsList.innerHTML = device.reasons.map(reason => 
+                `<div class="reason-item">• ${reason}</div>`
+            ).join('');
+        }
+        
+        function showDebugPanel() {
+            if (window.DeviceDetector) {
+                window.DeviceDetector.showDebugPanel();
+            }
+        }
+        
+        function exportResults() {
+            if (!currentDetection) {
+                alert('请先运行检测');
+                return;
+            }
+            
+            const results = {
+                timestamp: new Date().toISOString(),
+                detection: currentDetection,
+                network: window.DeviceDetector ? window.DeviceDetector.getNetworkInfo() : null,
+                userAgent: navigator.userAgent,
+                platform: navigator.platform,
+                vendor: navigator.vendor
+            };
+            
+            const blob = new Blob([JSON.stringify(results, null, 2)], { type: 'application/json' });
+            const url = URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = `device-detection-${Date.now()}.json`;
+            a.click();
+            URL.revokeObjectURL(url);
+        }
+        
+        function testRedirect() {
+            const redirectTest = document.getElementById('redirectTest');
+            const redirectResult = document.getElementById('redirectResult');
+            
+            redirectTest.style.display = 'block';
+            
+            // 模拟重定向逻辑测试
+            if (window.mobileRedirect && currentDetection) {
+                const shouldRedirect = currentDetection.isMobile || 
+                                     (currentDetection.isTablet && window.innerWidth <= 768) ||
+                                     window.DeviceDetector.getNetworkInfo().isSlowConnection;
+                
+                redirectResult.innerHTML = `
+                    <div class="info-card">
+                        <div class="info-title">重定向决策</div>
+                        ${createInfoItem('是否应该重定向', shouldRedirect ? '是' : '否')}
+                        ${createInfoItem('检测置信度', currentDetection.confidence + '%')}
+                        ${createInfoItem('设备类型', currentDetection.type)}
+                        ${createInfoItem('屏幕宽度', window.innerWidth + 'px')}
+                        ${createInfoItem('网络状况', window.DeviceDetector.getNetworkInfo().isSlowConnection ? '慢速' : '正常')}
+                    </div>
+                `;
+            } else {
+                redirectResult.innerHTML = '<div class="info-card">重定向模块未加载或检测未完成</div>';
+            }
+        }
+        
+        // 页面加载时自动运行检测
+        window.addEventListener('DOMContentLoaded', function() {
+            setTimeout(runDetection, 1000);
+        });
+        
+        // 监听窗口大小变化
+        window.addEventListener('resize', function() {
+            setTimeout(runDetection, 500);
+        });
+    </script>
+</body>
+</html>

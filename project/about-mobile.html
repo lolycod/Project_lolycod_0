@@ -1,0 +1,488 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+    <title>ℹ️ 情缘志 - 江湖情缘 ⚔️</title>
+    
+    <!-- 🚀 移动端优化：内联关键CSS -->
+    <style>
+        /* 🚀 防止页面闪烁的预加载样式 */
+        html {
+            visibility: hidden;
+            opacity: 0;
+        }
+        
+        html.loaded {
+            visibility: visible;
+            opacity: 1;
+            transition: opacity 0.3s ease-in-out;
+        }
+        
+        /* 🛡️ 安全机制：3秒后强制显示页面 */
+        html.force-show {
+            visibility: visible !important;
+            opacity: 1 !important;
+        }
+        
+        /* 移动端优化的基础样式 */
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+        
+        body {
+            background: linear-gradient(135deg, #8B0000 0%, #DAA520 50%, #2F4F2F 100%);
+            min-height: 100vh;
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            color: #F5DEB3;
+            overflow-x: hidden;
+            -webkit-overflow-scrolling: touch;
+        }
+        
+        /* 背景图片懒加载 */
+        .bg-loaded {
+            background-image: url('1/brk/微信图片_20250713234756.jpg');
+            background-size: cover;
+            background-position: center;
+            background-attachment: fixed;
+        }
+        
+        @media (max-width: 768px) {
+            .bg-loaded {
+                background-attachment: scroll; /* 移动端优化 */
+            }
+        }
+        
+        .container {
+            max-width: 100%;
+            padding: 10px;
+            margin: 0 auto;
+        }
+        
+        /* 简化的导航栏 */
+        .navbar {
+            background: rgba(0, 0, 0, 0.8);
+            padding: 10px;
+            position: sticky;
+            top: 0;
+            z-index: 1000;
+            backdrop-filter: blur(10px);
+        }
+        
+        .navbar-brand {
+            color: #FFD700;
+            font-size: 1.2rem;
+            font-weight: bold;
+            text-decoration: none;
+        }
+        
+        /* 主要内容区域 */
+        .main-content {
+            padding: 20px 10px;
+            min-height: calc(100vh - 120px);
+        }
+        
+        .page-title {
+            text-align: center;
+            color: #FFD700;
+            font-size: 1.8rem;
+            margin-bottom: 30px;
+            text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.5);
+        }
+        
+        /* 计数器样式 */
+        .counter-section {
+            background: rgba(0, 0, 0, 0.6);
+            border-radius: 15px;
+            padding: 20px;
+            margin: 20px 0;
+            text-align: center;
+            backdrop-filter: blur(5px);
+        }
+        
+        .counter-title {
+            color: #FFD700;
+            font-size: 1.3rem;
+            margin-bottom: 15px;
+        }
+        
+        .counter-display {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+            flex-wrap: wrap;
+        }
+        
+        .counter-number {
+            font-size: 2.5rem;
+            font-weight: bold;
+            color: #FF6B6B;
+            text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.5);
+        }
+        
+        .counter-text {
+            font-size: 1.2rem;
+            color: #F5DEB3;
+        }
+        
+        /* 时间显示 */
+        .time-section {
+            background: rgba(0, 0, 0, 0.6);
+            border-radius: 15px;
+            padding: 20px;
+            margin: 20px 0;
+            text-align: center;
+            backdrop-filter: blur(5px);
+        }
+        
+        .time-title {
+            color: #FFD700;
+            font-size: 1.3rem;
+            margin-bottom: 15px;
+        }
+        
+        .time-display {
+            font-size: 1.5rem;
+            color: #87CEEB;
+            font-family: 'Courier New', monospace;
+        }
+        
+        /* 故事区域 */
+        .story-container {
+            margin: 30px 0;
+        }
+        
+        .story-section {
+            background: rgba(0, 0, 0, 0.6);
+            border-radius: 15px;
+            padding: 20px;
+            margin: 20px 0;
+            backdrop-filter: blur(5px);
+        }
+        
+        .story-title {
+            color: #FFD700;
+            font-size: 1.3rem;
+            margin-bottom: 15px;
+            text-align: center;
+        }
+        
+        .story-content {
+            color: #F5DEB3;
+            line-height: 1.6;
+            margin-bottom: 15px;
+        }
+        
+        .story-poem {
+            color: #87CEEB;
+            font-style: italic;
+            text-align: center;
+            border-top: 1px solid rgba(255, 255, 255, 0.2);
+            padding-top: 15px;
+        }
+        
+        /* 简化的页脚 */
+        .footer {
+            background: rgba(0, 0, 0, 0.8);
+            color: #F5DEB3;
+            text-align: center;
+            padding: 20px 10px;
+            margin-top: 40px;
+        }
+        
+        /* 加载动画 */
+        .loading {
+            display: inline-block;
+            width: 20px;
+            height: 20px;
+            border: 3px solid rgba(255, 255, 255, 0.3);
+            border-radius: 50%;
+            border-top-color: #FFD700;
+            animation: spin 1s ease-in-out infinite;
+        }
+        
+        @keyframes spin {
+            to { transform: rotate(360deg); }
+        }
+        
+        /* 移动端响应式优化 */
+        @media (max-width: 480px) {
+            .page-title {
+                font-size: 1.5rem;
+            }
+            
+            .counter-number {
+                font-size: 2rem;
+            }
+            
+            .counter-text {
+                font-size: 1rem;
+            }
+            
+            .time-display {
+                font-size: 1.2rem;
+            }
+            
+            .container {
+                padding: 5px;
+            }
+            
+            .counter-section,
+            .time-section,
+            .story-section {
+                padding: 15px;
+                margin: 15px 0;
+            }
+        }
+        
+        /* 减少动画复杂度（慢速网络） */
+        @media (prefers-reduced-motion: reduce) {
+            *, *::before, *::after {
+                animation-duration: 0.01ms !important;
+                animation-iteration-count: 1 !important;
+                transition-duration: 0.01ms !important;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- 简化的导航栏 -->
+    <nav class="navbar">
+        <a href="index.html" class="navbar-brand">🏮 江湖情缘</a>
+    </nav>
+
+    <!-- 主要内容 -->
+    <div class="container">
+        <div class="main-content">
+            <!-- 页面标题 -->
+            <h1 class="page-title" id="pageTitle">ℹ️ 江湖情缘志 ℹ️</h1>
+
+            <!-- 陪伴计数器 -->
+            <div class="counter-section">
+                <h2 class="counter-title" id="counterTitle">🏮 陪伴时光 🏮</h2>
+                <div class="counter-display">
+                    <div class="counter-number" id="dayCounter">32</div>
+                    <div class="counter-text" id="counterText">天的江湖情缘</div>
+                </div>
+            </div>
+
+            <!-- 时间显示 -->
+            <div class="time-section">
+                <h2 class="time-title" id="timeTitle">⏰ 江湖时辰 ⏰</h2>
+                <div class="time-display" id="timeDisplay">
+                    <div class="loading"></div> 加载中...
+                </div>
+            </div>
+
+            <!-- 故事内容 -->
+            <div class="story-container" id="storyContainer">
+                <!-- 故事内容将通过JavaScript动态加载 -->
+            </div>
+        </div>
+    </div>
+
+    <!-- 简化的页脚 -->
+    <footer class="footer">
+        <p>🏮 以武侠风格记录，传承江湖情缘 🏮</p>
+        <p style="margin: 0; font-size: 0.7rem; color: #DAA520; opacity: 0.8;">作者：lolycod</p>
+    </footer>
+
+    <!-- 🚀 预加载脚本：立即隐藏页面防止闪烁 -->
+    <script>
+        (function() {
+            window.pageLoadStart = performance.now();
+            document.documentElement.style.visibility = 'hidden';
+            document.documentElement.style.opacity = '0';
+            
+            // 🛡️ 安全机制：3秒后强制显示页面
+            setTimeout(function() {
+                if (!document.documentElement.classList.contains('loaded')) {
+                    console.warn('⚠️ 页面初始化超时，强制显示页面');
+                    document.documentElement.classList.add('force-show');
+                }
+            }, 3000);
+        })();
+    </script>
+
+    <!-- 核心脚本（内联以减少请求） -->
+    <script>
+        // 简化的配置对象（内联关键配置）
+        const MOBILE_CONFIG = {
+            website: {
+                title: '柒柒和月月',
+                subtitle: '恋与燕云'
+            },
+            time: {
+                startDate: '2025-07-13',
+                startDays: 32
+            },
+            texts: {
+                pages: {
+                    aboutPageTitle: 'ℹ️ 江湖情缘志 ℹ️',
+                    counterTitle: '🏮 陪伴时光 🏮',
+                    counterText: '天甜甜蜜蜜',
+                    timeTitle: '⏰ 江湖时辰 ⏰'
+                }
+            },
+            stories: [
+                {
+                    title: '🌸 初遇江湖 🌸',
+                    content: '那一年，江湖初雪，我遇见了柒柒...',
+                    poem: '雪落江湖夜，初见倾城人'
+                }
+            ]
+        };
+
+        // 简化的计数器函数
+        function updateDayCounter() {
+            try {
+                const startDate = new Date(MOBILE_CONFIG.time.startDate);
+                const today = new Date();
+                const diffTime = Math.abs(today - startDate);
+                const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24)) + MOBILE_CONFIG.time.startDays;
+                
+                const counterElement = document.getElementById('dayCounter');
+                const counterTextElement = document.getElementById('counterText');
+                
+                if (counterElement) {
+                    counterElement.textContent = diffDays;
+                }
+                
+                if (counterTextElement) {
+                    counterTextElement.textContent = MOBILE_CONFIG.texts.pages.counterText;
+                }
+                
+                console.log('📅 陪伴天数更新:', diffDays);
+            } catch (error) {
+                console.error('❌ 计数器更新失败:', error);
+            }
+        }
+
+        // 简化的时间显示
+        function updateTimeDisplay() {
+            try {
+                const now = new Date();
+                const timeString = now.toLocaleString('zh-CN', {
+                    year: 'numeric',
+                    month: '2-digit',
+                    day: '2-digit',
+                    hour: '2-digit',
+                    minute: '2-digit',
+                    second: '2-digit'
+                });
+                
+                const timeElement = document.getElementById('timeDisplay');
+                if (timeElement) {
+                    timeElement.textContent = timeString;
+                }
+            } catch (error) {
+                console.error('❌ 时间更新失败:', error);
+            }
+        }
+
+        // 加载故事内容
+        function loadStories() {
+            try {
+                const container = document.getElementById('storyContainer');
+                if (!container) return;
+                
+                container.innerHTML = '';
+                
+                MOBILE_CONFIG.stories.forEach(story => {
+                    const storyElement = document.createElement('div');
+                    storyElement.className = 'story-section';
+                    storyElement.innerHTML = `
+                        <h3 class="story-title">${story.title}</h3>
+                        <div class="story-content">${story.content}</div>
+                        <div class="story-poem">${story.poem}</div>
+                    `;
+                    container.appendChild(storyElement);
+                });
+                
+                console.log('📖 故事内容加载完成');
+            } catch (error) {
+                console.error('❌ 故事加载失败:', error);
+            }
+        }
+
+        // 更新UI文本
+        function updateUIText() {
+            try {
+                const elements = {
+                    'pageTitle': MOBILE_CONFIG.texts.pages.aboutPageTitle,
+                    'counterTitle': MOBILE_CONFIG.texts.pages.counterTitle,
+                    'timeTitle': MOBILE_CONFIG.texts.pages.timeTitle
+                };
+                
+                Object.keys(elements).forEach(id => {
+                    const element = document.getElementById(id);
+                    if (element && elements[id]) {
+                        element.textContent = elements[id];
+                    }
+                });
+                
+                console.log('✅ UI文本更新完成');
+            } catch (error) {
+                console.error('❌ UI文本更新失败:', error);
+            }
+        }
+
+        // 延迟加载背景图片
+        function loadBackgroundImage() {
+            const img = new Image();
+            img.onload = function() {
+                document.body.classList.add('bg-loaded');
+                console.log('✅ 背景图片加载完成');
+            };
+            img.onerror = function() {
+                console.warn('⚠️ 背景图片加载失败，使用渐变背景');
+            };
+            img.src = '1/brk/微信图片_20250713234756.jpg';
+        }
+
+        // 主初始化函数
+        function initMobilePage() {
+            console.log('📱 移动端页面初始化开始');
+            
+            // 更新UI文本
+            updateUIText();
+            
+            // 更新计数器
+            updateDayCounter();
+            
+            // 加载故事
+            loadStories();
+            
+            // 启动时间更新
+            updateTimeDisplay();
+            setInterval(updateTimeDisplay, 1000);
+            
+            // 延迟加载背景图片
+            setTimeout(loadBackgroundImage, 500);
+            
+            // 显示页面
+            setTimeout(() => {
+                document.documentElement.classList.add('loaded');
+                document.documentElement.style.visibility = 'visible';
+                document.documentElement.style.opacity = '1';
+                
+                const loadTime = performance.now() - window.pageLoadStart;
+                console.log(`🎨 移动端页面渲染完成，总耗时: ${loadTime.toFixed(2)}ms`);
+            }, 100);
+        }
+
+        // DOM加载完成后初始化
+        if (document.readyState === 'loading') {
+            document.addEventListener('DOMContentLoaded', initMobilePage);
+        } else {
+            initMobilePage();
+        }
+    </script>
+
+    <!-- 移动端性能优化脚本（异步加载） -->
+    <script async src="mobile-optimization.js"></script>
+</body>
+</html>

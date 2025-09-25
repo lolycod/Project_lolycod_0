@@ -1,0 +1,250 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>配置测试页面</title>
+    <style>
+        body {
+            font-family: 'Microsoft YaHei', sans-serif;
+            margin: 20px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            min-height: 100vh;
+        }
+        .container {
+            max-width: 800px;
+            margin: 0 auto;
+            background: rgba(255, 255, 255, 0.1);
+            padding: 30px;
+            border-radius: 15px;
+            backdrop-filter: blur(10px);
+        }
+        .test-section {
+            margin: 20px 0;
+            padding: 20px;
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 10px;
+            border-left: 4px solid #4CAF50;
+        }
+        .config-item {
+            margin: 10px 0;
+            padding: 10px;
+            background: rgba(0, 0, 0, 0.2);
+            border-radius: 5px;
+            font-family: 'Courier New', monospace;
+        }
+        .success { color: #4CAF50; }
+        .error { color: #f44336; }
+        .warning { color: #ff9800; }
+        button {
+            background: #4CAF50;
+            color: white;
+            border: none;
+            padding: 12px 24px;
+            border-radius: 5px;
+            cursor: pointer;
+            margin: 5px;
+            font-size: 16px;
+        }
+        button:hover { background: #45a049; }
+        .highlight {
+            background: rgba(255, 255, 0, 0.3);
+            padding: 2px 4px;
+            border-radius: 3px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>🔧 配置测试页面</h1>
+        
+        <div class="test-section">
+            <h2>📋 USER_SIMPLE_CONFIG 检查</h2>
+            <div id="user-config-check"></div>
+            <button onclick="checkUserConfig()">检查用户配置</button>
+        </div>
+        
+        <div class="test-section">
+            <h2>🎯 counterText 配置测试</h2>
+            <div id="counter-text-check"></div>
+            <button onclick="testCounterText()">测试计数器文本</button>
+            <button onclick="updateCounterText()">应用配置更新</button>
+        </div>
+        
+        <div class="test-section">
+            <h2>🔄 配置同步测试</h2>
+            <div id="sync-test"></div>
+            <button onclick="testConfigSync()">测试配置同步</button>
+        </div>
+        
+        <div class="test-section">
+            <h2>📝 修改指南</h2>
+            <p>要修改"38天的江湖情缘"为"38天甜甜蜜蜜"，请按以下步骤：</p>
+            <ol>
+                <li>打开 <code>config.js</code> 文件</li>
+                <li>找到 <code>USER_SIMPLE_CONFIG</code> 对象</li>
+                <li>在 <code>texts.pages</code> 中找到 <code>counterText</code></li>
+                <li>将值修改为：<span class="highlight">"天甜甜蜜蜜"</span></li>
+                <li>保存文件并刷新页面</li>
+            </ol>
+        </div>
+    </div>
+
+    <!-- 引入配置文件 -->
+    <script src="config.js"></script>
+
+    <script>
+        function log(elementId, message, type = 'info') {
+            const element = document.getElementById(elementId);
+            const div = document.createElement('div');
+            div.className = `config-item ${type}`;
+            div.innerHTML = message;
+            element.appendChild(div);
+        }
+
+        function checkUserConfig() {
+            const checkElement = document.getElementById('user-config-check');
+            checkElement.innerHTML = '';
+            
+            // 检查USER_SIMPLE_CONFIG是否存在
+            if (typeof USER_SIMPLE_CONFIG === 'undefined') {
+                log('user-config-check', '❌ USER_SIMPLE_CONFIG 未定义', 'error');
+                return;
+            }
+            
+            log('user-config-check', '✅ USER_SIMPLE_CONFIG 已定义', 'success');
+            
+            // 检查texts配置
+            if (USER_SIMPLE_CONFIG.texts) {
+                log('user-config-check', '✅ texts 配置存在', 'success');
+                
+                if (USER_SIMPLE_CONFIG.texts.pages) {
+                    log('user-config-check', '✅ texts.pages 配置存在', 'success');
+                    
+                    if (USER_SIMPLE_CONFIG.texts.pages.counterText) {
+                        log('user-config-check', `✅ counterText: "${USER_SIMPLE_CONFIG.texts.pages.counterText}"`, 'success');
+                    } else {
+                        log('user-config-check', '❌ counterText 未配置', 'error');
+                    }
+                } else {
+                    log('user-config-check', '❌ texts.pages 未配置', 'error');
+                }
+            } else {
+                log('user-config-check', '❌ texts 配置不存在', 'error');
+            }
+            
+            // 显示完整的texts配置
+            if (USER_SIMPLE_CONFIG.texts) {
+                log('user-config-check', `完整texts配置: ${JSON.stringify(USER_SIMPLE_CONFIG.texts, null, 2)}`, 'info');
+            }
+        }
+
+        function testCounterText() {
+            const checkElement = document.getElementById('counter-text-check');
+            checkElement.innerHTML = '';
+            
+            // 检查当前配置值
+            if (typeof USER_SIMPLE_CONFIG !== 'undefined' && 
+                USER_SIMPLE_CONFIG.texts && 
+                USER_SIMPLE_CONFIG.texts.pages && 
+                USER_SIMPLE_CONFIG.texts.pages.counterText) {
+                
+                const currentText = USER_SIMPLE_CONFIG.texts.pages.counterText;
+                log('counter-text-check', `当前配置值: "${currentText}"`, 'info');
+                
+                if (currentText.includes('甜甜蜜蜜')) {
+                    log('counter-text-check', '✅ 配置已包含"甜甜蜜蜜"', 'success');
+                } else {
+                    log('counter-text-check', '⚠️ 配置尚未包含"甜甜蜜蜜"', 'warning');
+                }
+                
+                // 检查WEBSITE_CONFIG中的同步状态
+                if (typeof WEBSITE_CONFIG !== 'undefined' && 
+                    WEBSITE_CONFIG.uiText && 
+                    WEBSITE_CONFIG.uiText.pages && 
+                    WEBSITE_CONFIG.uiText.pages.about && 
+                    WEBSITE_CONFIG.uiText.pages.about.elements) {
+                    
+                    const syncedText = WEBSITE_CONFIG.uiText.pages.about.elements.counterText;
+                    log('counter-text-check', `系统配置值: "${syncedText}"`, 'info');
+                    
+                    if (currentText === syncedText) {
+                        log('counter-text-check', '✅ 配置已同步到系统', 'success');
+                    } else {
+                        log('counter-text-check', '⚠️ 配置尚未同步到系统', 'warning');
+                    }
+                } else {
+                    log('counter-text-check', '❌ 系统配置结构不完整', 'error');
+                }
+                
+            } else {
+                log('counter-text-check', '❌ counterText 配置不存在', 'error');
+            }
+        }
+
+        function updateCounterText() {
+            const checkElement = document.getElementById('counter-text-check');
+            
+            try {
+                // 手动触发配置同步
+                if (typeof syncUserSimpleConfig === 'function') {
+                    const result = syncUserSimpleConfig({ forceUpdate: true });
+                    
+                    if (result.success) {
+                        log('counter-text-check', '✅ 配置同步成功', 'success');
+                        
+                        // 重新检查配置
+                        setTimeout(() => {
+                            testCounterText();
+                        }, 100);
+                    } else {
+                        log('counter-text-check', `❌ 配置同步失败: ${result.error}`, 'error');
+                    }
+                } else {
+                    log('counter-text-check', '❌ syncUserSimpleConfig 函数不存在', 'error');
+                }
+            } catch (error) {
+                log('counter-text-check', `❌ 配置更新异常: ${error.message}`, 'error');
+            }
+        }
+
+        function testConfigSync() {
+            const checkElement = document.getElementById('sync-test');
+            checkElement.innerHTML = '';
+            
+            try {
+                if (typeof syncUserSimpleConfig === 'function') {
+                    log('sync-test', '🔄 开始配置同步测试...', 'info');
+                    
+                    const result = syncUserSimpleConfig({
+                        forceUpdate: true,
+                        progressCallback: (progress) => {
+                            log('sync-test', `同步进度: ${progress.stage} - ${progress.progress}%`, 'info');
+                        }
+                    });
+                    
+                    if (result.success) {
+                        log('sync-test', `✅ 配置同步成功，耗时: ${result.syncTime?.toFixed(2)}ms`, 'success');
+                        log('sync-test', `变更的配置块: ${result.changes?.join(', ') || '无'}`, 'info');
+                    } else {
+                        log('sync-test', `❌ 配置同步失败: ${result.error}`, 'error');
+                    }
+                } else {
+                    log('sync-test', '❌ syncUserSimpleConfig 函数不存在', 'error');
+                }
+            } catch (error) {
+                log('sync-test', `❌ 配置同步异常: ${error.message}`, 'error');
+            }
+        }
+
+        // 页面加载时自动检查
+        window.addEventListener('DOMContentLoaded', function() {
+            setTimeout(() => {
+                checkUserConfig();
+                testCounterText();
+            }, 1000);
+        });
+    </script>
+</body>
+</html>

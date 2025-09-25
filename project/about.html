@@ -1,0 +1,1535 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ℹ️ 情缘志 - 江湖情缘 ⚔️</title>
+    
+    <!-- Bootstrap 5 CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    
+    <!-- FontAwesome Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    
+    <style>
+        /* 🚀 防止页面闪烁的预加载样式 */
+        html {
+            visibility: hidden;
+            opacity: 0;
+        }
+
+        html.loaded {
+            visibility: visible;
+            opacity: 1;
+            transition: opacity 0.3s ease-in-out;
+        }
+
+        /* 🛡️ 安全机制：3秒后强制显示页面（防止JS失败导致页面永远不显示） */
+        html.force-show {
+            visibility: visible !important;
+            opacity: 1 !important;
+        }
+
+        /* 武侠风格基础样式 */
+        body {
+            background: url('1/brk/微信图片_20250713234756.jpg') center center / cover no-repeat fixed,
+                        linear-gradient(135deg, #8B0000 0%, #DAA520 50%, #2F4F2F 100%) !important;
+            min-height: 100vh;
+            font-family: 'KaiTi', '楷体', serif;
+            color: #F5DEB3;
+            overflow-x: hidden;
+        }
+        
+        /* 导航栏透明 */
+        .navbar {
+            background: transparent !important;
+            backdrop-filter: none !important;
+            border: none !important;
+            box-shadow: none !important;
+        }
+        
+        .navbar-brand {
+            color: #FFD700 !important;
+            font-weight: bold;
+            text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.8);
+        }
+        
+        .nav-link {
+            color: #F5DEB3 !important;
+            background: linear-gradient(145deg, 
+                rgba(139, 69, 19, 0.8) 0%,
+                rgba(160, 82, 45, 0.7) 30%,
+                rgba(210, 180, 140, 0.6) 70%,
+                rgba(139, 69, 19, 0.8) 100%
+            );
+            border: 2px solid #DAA520;
+            border-radius: 25px;
+            padding: 10px 20px !important;
+            margin: 0 5px;
+            font-weight: 700;
+            text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.9);
+            transition: all 0.3s ease;
+        }
+        
+        .nav-link:hover {
+            color: #FFD700 !important;
+            background: linear-gradient(145deg, 
+                rgba(218, 165, 32, 0.9) 0%,
+                rgba(255, 215, 0, 0.8) 30%,
+                rgba(255, 255, 224, 0.7) 50%,
+                rgba(255, 215, 0, 0.8) 70%,
+                rgba(218, 165, 32, 0.9) 100%
+            );
+            transform: translateY(-3px) scale(1.05);
+        }
+        
+        /* 主要内容区域 */
+        .main-content {
+            padding: 120px 0;
+            min-height: 100vh;
+        }
+        
+        .page-title {
+            color: #FFD700;
+            font-size: 3rem;
+            font-weight: bold;
+            text-shadow: 3px 3px 6px rgba(0, 0, 0, 0.8);
+            text-align: center;
+            margin-bottom: 3rem;
+        }
+        
+        .story-container {
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 2rem;
+        }
+        
+        .story-section {
+            background: linear-gradient(145deg, 
+                rgba(139, 69, 19, 0.15) 0%,
+                rgba(160, 82, 45, 0.12) 30%,
+                rgba(210, 180, 140, 0.08) 50%,
+                rgba(160, 82, 45, 0.12) 70%,
+                rgba(139, 69, 19, 0.15) 100%
+            );
+            border: 3px solid rgba(218, 165, 32, 0.4);
+            border-radius: 20px;
+            padding: 2rem;
+            margin-bottom: 2rem;
+            box-shadow: 
+                0 12px 30px rgba(0, 0, 0, 0.4),
+                inset 0 2px 0 rgba(255, 255, 255, 0.15),
+                inset 0 -2px 0 rgba(0, 0, 0, 0.15);
+        }
+        
+        .story-title {
+            color: #FFD700;
+            font-size: 1.8rem;
+            font-weight: bold;
+            text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.8);
+            margin-bottom: 1.5rem;
+            text-align: center;
+        }
+        
+        .story-content {
+            color: #F5DEB3;
+            font-size: 1.1rem;
+            text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.7);
+            line-height: 1.8;
+            text-align: justify;
+        }
+        
+        .story-poem {
+            color: #DAA520;
+            font-style: italic;
+            font-size: 1rem;
+            text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.7);
+            text-align: center;
+            margin: 1.5rem 0;
+            padding: 1rem;
+            background: rgba(0, 0, 0, 0.3);
+            border-radius: 10px;
+            border-left: 4px solid #DAA520;
+        }
+        
+        .counter-section {
+            text-align: center;
+            margin: 3rem 0;
+        }
+        
+        .counter-title {
+            color: #FFD700;
+            font-size: 2rem;
+            font-weight: bold;
+            text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.8);
+            margin-bottom: 1rem;
+        }
+        
+        .counter-display {
+            background: linear-gradient(145deg, 
+                rgba(139, 0, 0, 0.9) 0%,
+                rgba(178, 34, 34, 0.8) 50%,
+                rgba(139, 0, 0, 0.9) 100%
+            );
+            border: 3px solid #DAA520;
+            border-radius: 20px;
+            padding: 2rem;
+            display: inline-block;
+            box-shadow: 
+                0 8px 20px rgba(0, 0, 0, 0.6),
+                inset 0 1px 0 rgba(255, 255, 255, 0.1);
+        }
+        
+        .counter-number {
+            color: #FFD700;
+            font-size: 4rem;
+            font-weight: bold;
+            text-shadow: 3px 3px 6px rgba(0, 0, 0, 0.8);
+        }
+        
+        .counter-text {
+            color: #F5DEB3;
+            font-size: 1.2rem;
+            text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.7);
+            margin-top: 0.5rem;
+        }
+        
+        /* 时间显示样式 */
+        .time-display-section {
+            text-align: center;
+            margin: 3rem 0;
+        }
+        
+        .time-title {
+            color: #FFD700;
+            font-size: 2rem;
+            font-weight: bold;
+            text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.8);
+            margin-bottom: 1rem;
+        }
+        
+        .time-display-container {
+            position: relative;
+            display: inline-block;
+        }
+        
+        .current-time {
+            background: linear-gradient(145deg, 
+                rgba(47, 79, 79, 0.9) 0%,
+                rgba(70, 130, 180, 0.8) 50%,
+                rgba(47, 79, 79, 0.9) 100%
+            );
+            border: 3px solid #DAA520;
+            border-radius: 20px;
+            padding: 2rem;
+            box-shadow: 
+                0 8px 20px rgba(0, 0, 0, 0.6),
+                inset 0 1px 0 rgba(255, 255, 255, 0.1);
+            min-width: 300px;
+        }
+        
+        .time-text {
+            color: #FFD700;
+            font-size: 1.8rem;
+            font-weight: bold;
+            text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.8);
+            margin-bottom: 0.5rem;
+        }
+        
+        .time-subtitle {
+            color: #F5DEB3;
+            font-size: 1rem;
+            text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.7);
+        }
+        
+        /* 整点特效样式 */
+        .hourly-effect {
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            pointer-events: none;
+            overflow: hidden;
+            border-radius: 20px;
+        }
+        
+        /* 剑影扫光特效 */
+        .sword-sweep-effect {
+            position: absolute;
+            top: -10px;
+            left: -100%;
+            width: 100%;
+            height: calc(100% + 20px);
+            background: linear-gradient(
+                90deg,
+                transparent 0%,
+                rgba(255, 215, 0, 0.1) 20%,
+                rgba(255, 215, 0, 0.6) 50%,
+                rgba(255, 215, 0, 0.1) 80%,
+                transparent 100%
+            );
+            transform: skewX(-20deg);
+            animation: swordSweep 2s ease-out;
+        }
+        
+        @keyframes swordSweep {
+            0% {
+                left: -100%;
+                opacity: 0;
+            }
+            10% {
+                opacity: 1;
+            }
+            90% {
+                opacity: 1;
+            }
+            100% {
+                left: 100%;
+                opacity: 0;
+            }
+        }
+        
+        /* clip-path扫光特效 */
+        .clip-path-effect {
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: linear-gradient(
+                45deg,
+                rgba(255, 215, 0, 0.3) 0%,
+                rgba(255, 215, 0, 0.6) 50%,
+                rgba(255, 215, 0, 0.3) 100%
+            );
+            clip-path: polygon(0 0, 0 0, 0 100%, 0 100%);
+            animation: clipPathSweep 2s ease-out;
+        }
+        
+        @keyframes clipPathSweep {
+            0% {
+                clip-path: polygon(0 0, 0 0, 0 100%, 0 100%);
+            }
+            50% {
+                clip-path: polygon(0 0, 50% 0, 50% 100%, 0 100%);
+            }
+            100% {
+                clip-path: polygon(100% 0, 100% 0, 100% 100%, 100% 100%);
+            }
+        }
+        
+        /* SVG路径特效 */
+        .svg-path-effect {
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            opacity: 0;
+            animation: svgPathFade 2s ease-out;
+        }
+        
+        .svg-path-effect svg {
+            width: 100%;
+            height: 100%;
+        }
+        
+        .svg-path-effect path {
+            stroke: #FFD700;
+            stroke-width: 2;
+            fill: none;
+            stroke-dasharray: 1000;
+            stroke-dashoffset: 1000;
+            animation: svgPathDraw 2s ease-out;
+        }
+        
+        @keyframes svgPathFade {
+            0%, 10% { opacity: 0; }
+            20%, 80% { opacity: 1; }
+            90%, 100% { opacity: 0; }
+        }
+        
+        @keyframes svgPathDraw {
+            0% { stroke-dashoffset: 1000; }
+            100% { stroke-dashoffset: 0; }
+        }
+        
+        /* 农历显示样式 */
+        .lunar-display-section {
+            text-align: center;
+            margin: 3rem 0;
+        }
+        
+        .lunar-title {
+            color: #FFD700;
+            font-size: 2rem;
+            font-weight: bold;
+            text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.8);
+            margin-bottom: 1rem;
+        }
+        
+        .lunar-scroll-container {
+            display: inline-block;
+            position: relative;
+        }
+        
+        .lunar-scroll {
+            background: linear-gradient(145deg, 
+                rgba(139, 69, 19, 0.9) 0%,
+                rgba(160, 82, 45, 0.8) 30%,
+                rgba(210, 180, 140, 0.6) 50%,
+                rgba(160, 82, 45, 0.8) 70%,
+                rgba(139, 69, 19, 0.9) 100%
+            );
+            border: 3px solid #DAA520;
+            border-radius: 15px;
+            padding: 2rem 1.5rem;
+            min-width: 280px;
+            box-shadow: 
+                0 8px 20px rgba(0, 0, 0, 0.6),
+                inset 0 2px 0 rgba(255, 255, 255, 0.15),
+                inset 0 -2px 0 rgba(0, 0, 0, 0.15);
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .lunar-scroll::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100"><defs><pattern id="scroll-pattern" x="0" y="0" width="20" height="20" patternUnits="userSpaceOnUse"><circle cx="10" cy="10" r="1" fill="%23DAA520" opacity="0.1"/></pattern></defs><rect width="100" height="100" fill="url(%23scroll-pattern)"/></svg>');
+            opacity: 0.3;
+            pointer-events: none;
+        }
+        
+        .scroll-header, .scroll-footer {
+            color: #DAA520;
+            font-size: 0.9rem;
+            font-weight: bold;
+            text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.8);
+            margin: 0.5rem 0;
+            position: relative;
+            z-index: 1;
+        }
+        
+        .lunar-content {
+            position: relative;
+            z-index: 1;
+            margin: 1.5rem 0;
+        }
+        
+        .ganZhi-text {
+            color: #FFD700;
+            font-size: 1.4rem;
+            font-weight: bold;
+            text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.8);
+            margin-bottom: 0.8rem;
+        }
+        
+        .lunar-date {
+            color: #F5DEB3;
+            font-size: 1.6rem;
+            font-weight: bold;
+            text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.7);
+            margin-bottom: 0.8rem;
+        }
+        
+        .solar-term {
+            color: #98FB98;
+            font-size: 1.2rem;
+            font-weight: bold;
+            text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.7);
+            padding: 0.5rem;
+            background: rgba(0, 0, 0, 0.3);
+            border-radius: 8px;
+            border: 1px solid rgba(152, 251, 152, 0.3);
+        }
+        
+        /* 卷轴展开动画 */
+        .lunar-scroll.unfold {
+            animation: scrollUnfold 1s ease-out;
+        }
+        
+        @keyframes scrollUnfold {
+            0% {
+                transform: scaleY(0.1) rotateX(90deg);
+                opacity: 0;
+            }
+            50% {
+                transform: scaleY(0.5) rotateX(45deg);
+                opacity: 0.5;
+            }
+            100% {
+                transform: scaleY(1) rotateX(0deg);
+                opacity: 1;
+            }
+        }
+        
+        /* 页脚 */
+        .wuxia-footer {
+            background: linear-gradient(145deg, 
+                rgba(0, 0, 0, 0.8) 0%,
+                rgba(32, 32, 32, 0.7) 50%,
+                rgba(0, 0, 0, 0.8) 100%
+            );
+            backdrop-filter: blur(5px);
+            border-top: 3px solid #DAA520;
+            box-shadow: 0 -4px 20px rgba(0, 0, 0, 0.5);
+            padding: 2rem 0;
+            text-align: center;
+            color: #F5DEB3;
+        }
+        
+        .footer-seal {
+            background: linear-gradient(145deg, 
+                rgba(218, 165, 32, 0.9) 0%,
+                rgba(255, 215, 0, 0.8) 50%,
+                rgba(218, 165, 32, 0.9) 100%
+            );
+            color: #000000;
+            text-shadow: 1px 1px 2px rgba(255, 255, 255, 0.3);
+            border: 3px solid #000000;
+            border-radius: 50%;
+            padding: 8px 15px;
+            font-weight: 900;
+            display: inline-block;
+            margin-bottom: 0.5rem;
+            box-shadow: 
+                0 4px 10px rgba(0, 0, 0, 0.6),
+                inset 0 1px 0 rgba(255, 255, 255, 0.3);
+            transition: all 0.3s ease;
+            cursor: pointer;
+        }
+        
+        .footer-seal:hover {
+            transform: scale(1.05) rotate(5deg);
+        }
+        
+        /* 响应式 */
+        @media (max-width: 768px) {
+            .page-title {
+                font-size: 2rem;
+            }
+            
+            .story-container {
+                padding: 1rem;
+            }
+            
+            .counter-number {
+                font-size: 3rem;
+            }
+            
+            .nav-link {
+                margin: 2px;
+                padding: 8px 16px !important;
+                font-size: 0.9rem;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- 导航栏 -->
+    <nav class="navbar navbar-expand-lg fixed-top">
+        <div class="container">
+            <a class="navbar-brand" href="index.html">
+                <i class="fas fa-sword me-2"></i>江湖情缘
+            </a>
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="collapse navbar-collapse" id="navbarNav">
+                <ul class="navbar-nav ms-auto">
+                    <li class="nav-item">
+                        <a class="nav-link" href="index.html">
+                            <i class="fas fa-home me-1"></i>江湖
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="memories.html">
+                            <i class="fas fa-images me-1"></i>回忆录
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link active" href="about.html">
+                            <i class="fas fa-info-circle me-1"></i>情缘志
+                        </a>
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </nav>
+
+    <!-- 主要内容区域 -->
+    <main class="main-content">
+        <div class="container">
+            <h1 class="page-title">ℹ️ 江湖情缘志 ℹ️</h1>
+            
+            <div class="story-container">
+                <!-- 陪伴计数器 -->
+                <div class="counter-section">
+                    <h2 class="counter-title">🏮 陪伴时光 🏮</h2>
+                    <div class="counter-display">
+                        <div class="counter-number" id="dayCounter">32</div>
+                        <div class="counter-text" id="counterText">天的江湖情缘</div>
+                    </div>
+                </div>
+
+                <!-- 实时时间显示 -->
+                <div class="time-display-section">
+                    <h2 class="time-title">⏰ 江湖时辰 ⏰</h2>
+                    <div class="time-display-container">
+                        <div class="current-time" id="currentTimeDisplay">
+                            <div class="time-text" id="timeText">2025年07月17日 12:00:00</div>
+                            <div class="time-subtitle">当前时辰</div>
+                        </div>
+                        <!-- 整点特效容器 -->
+                        <div class="hourly-effect" id="hourlyEffect"></div>
+                    </div>
+                </div>
+
+                <!-- 农历日期显示 -->
+                <div class="lunar-display-section">
+                    <h2 class="lunar-title">🌙 农历时光 🌙</h2>
+                    <div class="lunar-scroll-container">
+                        <div class="lunar-scroll" id="lunarScrollDisplay">
+                            <div class="scroll-header">江湖历法</div>
+                            <div class="lunar-content" id="lunarContent">
+                                <div class="ganZhi-text" id="ganZhiText">甲辰年</div>
+                                <div class="lunar-date" id="lunarDate">七月初二</div>
+                                <div class="solar-term" id="solarTerm">处暑</div>
+                            </div>
+                            <div class="scroll-footer">天道轮回</div>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- 情缘故事 -->
+                <div class="story-section">
+                    <h3 class="story-title">⚔️ 江湖初遇 ⚔️</h3>
+                    <div class="story-content">
+                        在这个充满传奇的江湖世界里，我遇见了柒柒。那一刻，仿佛整个江湖都为之静止，只有她的笑容如春风般温暖。从那时起，我便知道，这一生的江湖路，我愿与她携手同行。
+                    </div>
+                    <div class="story-poem">"初见倾城色，再见倾城心"</div>
+                </div>
+                
+                <div class="story-section">
+                    <h3 class="story-title">🌙 情深如海 🌙</h3>
+                    <div class="story-content">
+                        江湖路漫漫，风雨兼程。但有了柒柒的陪伴，再艰难的路也变得温暖如春。我们一起看过江湖的日出日落，走过山川河流，每一个瞬间都成为了最珍贵的回忆。
+                    </div>
+                    <div class="story-poem">"情深不负相思意，此心只为伊人痴"</div>
+                </div>
+                
+                <div class="story-section">
+                    <h3 class="story-title">🎵 琴瑟和鸣 🎵</h3>
+                    <div class="story-content">
+                        在这个武侠风格的回忆录中，记录着我们的点点滴滴。每一张照片都是一个故事，每一个故事都承载着我们的情感。愿这份情缘能够传承下去，成为江湖中最美的传说。
+                    </div>
+                    <div class="story-poem">"琴瑟和鸣奏华章，此生与君共徜徉"</div>
+                </div>
+                
+                <div class="story-section">
+                    <h3 class="story-title">🏮 永恒誓言 🏮</h3>
+                    <div class="story-content">
+                        纵然江湖险恶，世事无常，但我对柒柒的情意永不改变。愿我们的爱情如这武侠传说般，流传千古，成为后人传颂的佳话。此生此世，唯愿与君不离不弃，共度江湖岁月。
+                    </div>
+                    <div class="story-poem">"山无陵，江水为竭，此情不绝"</div>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <!-- 页脚 -->
+    <footer class="wuxia-footer">
+        <div class="container">
+            <div class="footer-seal">江湖情缘</div>
+            <p style="margin: 0; font-size: 0.9rem;">⚔️ &copy; 2025 江湖情缘 - 武侠风格回忆录 ⚔️</p>
+            <p style="margin: 0; font-size: 0.8rem;">🏮 以武侠风格记录，传承江湖情缘 🏮</p>
+            <p style="margin: 0; font-size: 0.7rem; color: #DAA520; opacity: 0.8;">作者：lolycod</p>
+        </div>
+    </footer>
+
+    <!-- Bootstrap JavaScript -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+
+    <!-- Lunar JavaScript 库 -->
+    <script src="https://cdn.jsdelivr.net/npm/lunar-javascript@1.6.12/dist/lunar.min.js"></script>
+
+    <!-- 配置文件 -->
+    <script src="config.js"></script>
+
+    <!-- 公共初始化模块 -->
+    <script src="common-init.js"></script>
+
+    <!-- 模块管理器 -->
+    <script src="module-manager.js"></script>
+
+    <!-- 快速修复脚本 -->
+    <script src="quick-fix.js"></script>
+
+    <!-- 移动端性能优化脚本 -->
+    <script async src="mobile-optimization.js"></script>
+
+    <!-- 精确设备检测器 -->
+    <script src="device-detector.js"></script>
+
+    <!-- 移动端智能重定向脚本 -->
+    <script async src="mobile-redirect.js"></script>
+
+    <script>
+        console.log('ℹ️ 情缘志页面启动...');
+        
+        // 🕐 TimeDisplayModule - 时间显示模块
+        class TimeDisplayModule {
+            constructor(config = {}) {
+                this.config = {
+                    enabled: true,
+                    showSeconds: true,
+                    format: 'YYYY年MM月DD日 HH:mm:ss',
+                    enableHourlyEffect: true,
+                    effectType: 'sword-sweep',
+                    effectDuration: 2000,
+                    ...config
+                };
+                
+                this.timeElement = null;
+                this.effectElement = null;
+                this.updateInterval = null;
+                this.lastHour = -1;
+                
+                console.log('🕐 TimeDisplayModule 初始化完成', this.config);
+            }
+            
+            // 初始化时间显示模块
+            init() {
+                try {
+                    if (!this.config.enabled) {
+                        console.log('⏸️ 时间显示模块已禁用');
+                        return { success: false, message: '模块已禁用' };
+                    }
+                    
+                    // 获取DOM元素
+                    this.timeElement = document.getElementById('timeText');
+                    this.effectElement = document.getElementById('hourlyEffect');
+                    
+                    if (!this.timeElement) {
+                        throw new Error('找不到时间显示元素 #timeText');
+                    }
+                    
+                    // 立即更新一次时间
+                    this.updateTime();
+                    
+                    // 启动定时更新
+                    this.startTimeUpdate();
+                    
+                    console.log('✅ TimeDisplayModule 初始化成功');
+                    return { success: true, message: '时间显示模块初始化成功' };
+                    
+                } catch (error) {
+                    console.error('❌ TimeDisplayModule 初始化失败:', error);
+                    return { success: false, error: error.message };
+                }
+            }
+            
+            // 启动时间更新
+            startTimeUpdate() {
+                if (this.updateInterval) {
+                    clearInterval(this.updateInterval);
+                }
+                
+                this.updateInterval = setInterval(() => {
+                    this.updateTime();
+                }, 1000);
+                
+                console.log('⏰ 时间更新定时器已启动');
+            }
+            
+            // 停止时间更新
+            stopTimeUpdate() {
+                if (this.updateInterval) {
+                    clearInterval(this.updateInterval);
+                    this.updateInterval = null;
+                    console.log('⏹️ 时间更新定时器已停止');
+                }
+            }
+            
+            // 更新时间显示
+            updateTime() {
+                try {
+                    const now = new Date();
+                    const formattedTime = this.formatTime(now);
+                    
+                    if (this.timeElement) {
+                        this.timeElement.textContent = formattedTime;
+                    }
+                    
+                    // 检查是否整点
+                    if (this.config.enableHourlyEffect && this.isHourlyMoment(now)) {
+                        this.triggerHourlyEffect();
+                    }
+                    
+                } catch (error) {
+                    console.error('❌ 时间更新失败:', error);
+                }
+            }
+            
+            // 格式化时间
+            formatTime(date) {
+                const year = date.getFullYear();
+                const month = String(date.getMonth() + 1).padStart(2, '0');
+                const day = String(date.getDate()).padStart(2, '0');
+                const hour = String(date.getHours()).padStart(2, '0');
+                const minute = String(date.getMinutes()).padStart(2, '0');
+                const second = String(date.getSeconds()).padStart(2, '0');
+                
+                let formatted = this.config.format;
+                formatted = formatted.replace('YYYY', year);
+                formatted = formatted.replace('MM', month);
+                formatted = formatted.replace('DD', day);
+                formatted = formatted.replace('HH', hour);
+                formatted = formatted.replace('mm', minute);
+                
+                if (this.config.showSeconds) {
+                    formatted = formatted.replace('ss', second);
+                } else {
+                    formatted = formatted.replace(':ss', '').replace(' ss', '');
+                }
+                
+                return formatted;
+            }
+            
+            // 检查是否整点时刻
+            isHourlyMoment(date) {
+                const currentHour = date.getHours();
+                const currentMinute = date.getMinutes();
+                const currentSecond = date.getSeconds();
+                
+                // 整点的前3秒内触发特效（避免重复触发）
+                if (currentMinute === 0 && currentSecond <= 3 && this.lastHour !== currentHour) {
+                    this.lastHour = currentHour;
+                    return true;
+                }
+                
+                return false;
+            }
+            
+            // 触发整点特效
+            triggerHourlyEffect() {
+                if (!this.effectElement) {
+                    console.warn('⚠️ 找不到特效容器元素');
+                    return;
+                }
+                
+                try {
+                    // 清除之前的特效
+                    this.effectElement.innerHTML = '';
+                    
+                    // 创建特效元素
+                    const effectDiv = document.createElement('div');
+                    
+                    switch (this.config.effectType) {
+                        case 'sword-sweep':
+                            effectDiv.className = 'sword-sweep-effect';
+                            break;
+                        case 'clip-path':
+                            effectDiv.className = 'clip-path-effect';
+                            break;
+                        case 'svg-path':
+                            effectDiv.className = 'svg-path-effect';
+                            effectDiv.innerHTML = `
+                                <svg viewBox="0 0 300 100" xmlns="http://www.w3.org/2000/svg">
+                                    <path d="M0,50 Q75,10 150,50 T300,50" stroke="#FFD700" stroke-width="2" fill="none"/>
+                                    <path d="M0,30 Q75,70 150,30 T300,30" stroke="#FFD700" stroke-width="1" fill="none"/>
+                                    <path d="M0,70 Q75,30 150,70 T300,70" stroke="#FFD700" stroke-width="1" fill="none"/>
+                                </svg>
+                            `;
+                            break;
+                        default:
+                            effectDiv.className = 'sword-sweep-effect';
+                    }
+                    
+                    this.effectElement.appendChild(effectDiv);
+                    
+                    // 特效结束后清理
+                    setTimeout(() => {
+                        if (this.effectElement && effectDiv.parentNode) {
+                            this.effectElement.removeChild(effectDiv);
+                        }
+                    }, this.config.effectDuration);
+                    
+                    console.log('⚔️ 整点特效已触发:', this.config.effectType);
+                    
+                } catch (error) {
+                    console.error('❌ 特效触发失败:', error);
+                }
+            }
+            
+            // 获取当前时间信息
+            getCurrentTimeInfo() {
+                const now = new Date();
+                return {
+                    timestamp: now.getTime(),
+                    formatted: this.formatTime(now),
+                    year: now.getFullYear(),
+                    month: now.getMonth() + 1,
+                    day: now.getDate(),
+                    hour: now.getHours(),
+                    minute: now.getMinutes(),
+                    second: now.getSeconds(),
+                    isHourly: this.isHourlyMoment(now)
+                };
+            }
+            
+            // 更新配置
+            updateConfig(newConfig) {
+                this.config = { ...this.config, ...newConfig };
+                console.log('🔄 TimeDisplayModule 配置已更新', this.config);
+                
+                // 如果模块被禁用，停止更新
+                if (!this.config.enabled) {
+                    this.stopTimeUpdate();
+                } else if (!this.updateInterval) {
+                    this.startTimeUpdate();
+                }
+            }
+            
+            // 手动触发特效（用于测试）
+            testHourlyEffect() {
+                console.log('🧪 手动触发整点特效测试');
+                this.triggerHourlyEffect();
+            }
+            
+            // 销毁模块
+            destroy() {
+                this.stopTimeUpdate();
+                this.timeElement = null;
+                this.effectElement = null;
+                console.log('🗑️ TimeDisplayModule 已销毁');
+            }
+        }
+        
+        // 全局时间显示模块实例
+        let timeDisplayModule = null;
+        
+        // 🌙 LunarCalendarModule - 农历计算模块
+        class LunarCalendarModule {
+            constructor(config = {}) {
+                this.config = {
+                    enabled: true,
+                    showGanZhi: true,
+                    showSolarTerm: true,
+                    displayFormat: '{ganZhi} {lunar} {solarTerm}',
+                    scrollStyle: 'traditional',
+                    scrollAnimation: true,
+                    ...config
+                };
+                
+                this.lunarLib = null;
+                this.ganZhiElement = null;
+                this.lunarDateElement = null;
+                this.solarTermElement = null;
+                this.scrollElement = null;
+                
+                console.log('🌙 LunarCalendarModule 初始化完成', this.config);
+            }
+            
+            // 初始化农历模块
+            init() {
+                try {
+                    if (!this.config.enabled) {
+                        console.log('⏸️ 农历显示模块已禁用');
+                        return { success: false, message: '模块已禁用' };
+                    }
+                    
+                    // 检查lunar-javascript库是否加载
+                    if (typeof Lunar === 'undefined') {
+                        console.warn('⚠️ lunar-javascript库未加载，使用降级方案');
+                        this.showFallbackDisplay();
+                        return { success: true, message: '使用降级方案显示农历信息' };
+                    }
+                    
+                    this.lunarLib = Lunar;
+                    
+                    // 获取DOM元素
+                    this.ganZhiElement = document.getElementById('ganZhiText');
+                    this.lunarDateElement = document.getElementById('lunarDate');
+                    this.solarTermElement = document.getElementById('solarTerm');
+                    this.scrollElement = document.getElementById('lunarScrollDisplay');
+                    
+                    if (!this.ganZhiElement || !this.lunarDateElement || !this.solarTermElement) {
+                        throw new Error('找不到农历显示元素');
+                    }
+                    
+                    // 立即更新一次农历信息
+                    this.updateLunarInfo();
+                    
+                    // 触发卷轴展开动画
+                    if (this.config.scrollAnimation && this.scrollElement) {
+                        setTimeout(() => {
+                            this.scrollElement.classList.add('unfold');
+                        }, 200);
+                    }
+                    
+                    console.log('✅ LunarCalendarModule 初始化成功');
+                    return { success: true, message: '农历显示模块初始化成功' };
+                    
+                } catch (error) {
+                    console.error('❌ LunarCalendarModule 初始化失败:', error);
+                    this.showFallbackDisplay();
+                    return { success: false, error: error.message };
+                }
+            }
+            
+            // 更新农历信息
+            updateLunarInfo() {
+                try {
+                    const now = new Date();
+                    const lunarInfo = this.getCurrentLunarInfo(now);
+                    
+                    // 更新干支纪年
+                    if (this.config.showGanZhi && this.ganZhiElement) {
+                        this.ganZhiElement.textContent = lunarInfo.ganZhi.year;
+                    }
+                    
+                    // 更新农历日期
+                    if (this.lunarDateElement) {
+                        this.lunarDateElement.textContent = lunarInfo.lunar.formatted;
+                    }
+                    
+                    // 更新节气
+                    if (this.config.showSolarTerm && this.solarTermElement) {
+                        this.solarTermElement.textContent = lunarInfo.solarTerm.name || '无节气';
+                    }
+                    
+                    console.log('🌙 农历信息已更新:', lunarInfo);
+                    
+                } catch (error) {
+                    console.error('❌ 农历信息更新失败:', error);
+                    this.showFallbackDisplay();
+                }
+            }
+            
+            // 获取当前农历信息
+            getCurrentLunarInfo(date = new Date()) {
+                try {
+                    const solar = this.lunarLib.Solar.fromDate(date);
+                    const lunar = solar.getLunar();
+                    
+                    // 获取干支纪年
+                    const ganZhi = {
+                        year: lunar.getYearInGanZhi() + '年',
+                        month: lunar.getMonthInGanZhi() + '月',
+                        day: lunar.getDayInGanZhi() + '日'
+                    };
+                    
+                    // 获取农历日期
+                    const lunarDate = {
+                        year: lunar.getYear(),
+                        month: lunar.getMonth(),
+                        day: lunar.getDay(),
+                        monthName: lunar.getMonthInChinese(),
+                        dayName: lunar.getDayInChinese(),
+                        formatted: `${lunar.getMonthInChinese()}${lunar.getDayInChinese()}`
+                    };
+                    
+                    // 获取节气信息
+                    const jieQi = lunar.getCurrentJieQi();
+                    const solarTerm = {
+                        name: jieQi ? jieQi.getName() : null,
+                        date: jieQi ? jieQi.getSolar().toYmd() : null
+                    };
+                    
+                    return {
+                        ganZhi: ganZhi,
+                        lunar: lunarDate,
+                        solarTerm: solarTerm,
+                        formatted: this.formatLunarDisplay(ganZhi, lunarDate, solarTerm)
+                    };
+                    
+                } catch (error) {
+                    console.error('❌ 农历信息计算失败:', error);
+                    return this.getFallbackLunarInfo();
+                }
+            }
+            
+            // 格式化农历显示
+            formatLunarDisplay(ganZhi, lunar, solarTerm) {
+                let formatted = this.config.displayFormat;
+                
+                formatted = formatted.replace('{ganZhi}', ganZhi.year);
+                formatted = formatted.replace('{lunar}', lunar.formatted);
+                formatted = formatted.replace('{solarTerm}', solarTerm.name || '');
+                
+                return formatted.trim();
+            }
+            
+            // 获取备用农历信息
+            getFallbackLunarInfo() {
+                const now = new Date();
+                return {
+                    ganZhi: {
+                        year: '甲辰年',
+                        month: '庚申月',
+                        day: '乙卯日'
+                    },
+                    lunar: {
+                        year: 2024,
+                        month: 7,
+                        day: 2,
+                        monthName: '七月',
+                        dayName: '初二',
+                        formatted: '七月初二'
+                    },
+                    solarTerm: {
+                        name: '处暑',
+                        date: null
+                    },
+                    formatted: '甲辰年 七月初二 处暑'
+                };
+            }
+            
+            // 显示备用信息
+            showFallbackDisplay() {
+                try {
+                    const fallback = this.getFallbackLunarInfo();
+                    
+                    if (this.ganZhiElement) {
+                        this.ganZhiElement.textContent = fallback.ganZhi.year;
+                    }
+                    
+                    if (this.lunarDateElement) {
+                        this.lunarDateElement.textContent = fallback.lunar.formatted;
+                    }
+                    
+                    if (this.solarTermElement) {
+                        this.solarTermElement.textContent = fallback.solarTerm.name;
+                    }
+                    
+                    console.log('⚠️ 使用备用农历信息显示');
+                    
+                } catch (error) {
+                    console.error('❌ 备用显示也失败了:', error);
+                }
+            }
+            
+            // 获取干支纪年
+            getGanZhiYear(date = new Date()) {
+                try {
+                    const solar = this.lunarLib.Solar.fromDate(date);
+                    const lunar = solar.getLunar();
+                    return lunar.getYearInGanZhi() + '年';
+                } catch (error) {
+                    console.error('❌ 获取干支纪年失败:', error);
+                    return '甲辰年';
+                }
+            }
+            
+            // 获取农历日期
+            getLunarDate(date = new Date()) {
+                try {
+                    const solar = this.lunarLib.Solar.fromDate(date);
+                    const lunar = solar.getLunar();
+                    return `${lunar.getMonthInChinese()}${lunar.getDayInChinese()}`;
+                } catch (error) {
+                    console.error('❌ 获取农历日期失败:', error);
+                    return '七月初二';
+                }
+            }
+            
+            // 获取当前节气
+            getCurrentSolarTerm(date = new Date()) {
+                try {
+                    const solar = this.lunarLib.Solar.fromDate(date);
+                    const lunar = solar.getLunar();
+                    const jieQi = lunar.getCurrentJieQi();
+                    
+                    if (jieQi) {
+                        return {
+                            name: jieQi.getName(),
+                            date: jieQi.getSolar().toYmd(),
+                            isToday: jieQi.getSolar().toYmd() === solar.toYmd()
+                        };
+                    } else {
+                        // 如果当前没有节气，获取下一个节气
+                        const nextJieQi = lunar.getNextJieQi();
+                        return {
+                            name: nextJieQi ? `距${nextJieQi.getName()}` : '无节气',
+                            date: nextJieQi ? nextJieQi.getSolar().toYmd() : null,
+                            isToday: false
+                        };
+                    }
+                } catch (error) {
+                    console.error('❌ 获取节气失败:', error);
+                    return {
+                        name: '处暑',
+                        date: null,
+                        isToday: false
+                    };
+                }
+            }
+            
+            // 获取详细的节气信息
+            getDetailedSolarTermInfo(date = new Date()) {
+                try {
+                    const solar = this.lunarLib.Solar.fromDate(date);
+                    const lunar = solar.getLunar();
+                    
+                    const currentJieQi = lunar.getCurrentJieQi();
+                    const nextJieQi = lunar.getNextJieQi();
+                    const prevJieQi = lunar.getPrevJieQi();
+                    
+                    return {
+                        current: currentJieQi ? {
+                            name: currentJieQi.getName(),
+                            date: currentJieQi.getSolar().toYmd(),
+                            isToday: currentJieQi.getSolar().toYmd() === solar.toYmd()
+                        } : null,
+                        next: nextJieQi ? {
+                            name: nextJieQi.getName(),
+                            date: nextJieQi.getSolar().toYmd(),
+                            daysUntil: this.calculateDaysBetween(solar.toDate(), nextJieQi.getSolar().toDate())
+                        } : null,
+                        prev: prevJieQi ? {
+                            name: prevJieQi.getName(),
+                            date: prevJieQi.getSolar().toYmd(),
+                            daysSince: this.calculateDaysBetween(prevJieQi.getSolar().toDate(), solar.toDate())
+                        } : null
+                    };
+                } catch (error) {
+                    console.error('❌ 获取详细节气信息失败:', error);
+                    return null;
+                }
+            }
+            
+            // 计算两个日期之间的天数
+            calculateDaysBetween(date1, date2) {
+                const timeDiff = Math.abs(date2.getTime() - date1.getTime());
+                return Math.ceil(timeDiff / (1000 * 3600 * 24));
+            }
+            
+            // 更新配置
+            updateConfig(newConfig) {
+                this.config = { ...this.config, ...newConfig };
+                console.log('🔄 LunarCalendarModule 配置已更新', this.config);
+                
+                // 重新更新显示
+                if (this.config.enabled) {
+                    this.updateLunarInfo();
+                }
+            }
+            
+            // 销毁模块
+            destroy() {
+                this.lunarLib = null;
+                this.ganZhiElement = null;
+                this.lunarDateElement = null;
+                this.solarTermElement = null;
+                this.scrollElement = null;
+                console.log('🗑️ LunarCalendarModule 已销毁');
+            }
+        }
+        
+        // 全局农历显示模块实例
+        let lunarCalendarModule = null;
+        
+        // 计算陪伴天数 - 从config.js读取配置，基于北京时间每天递增
+        function updateDayCounter() {
+            // 使用config.js中的配置
+            const displayDays = calculateDayCounter();
+
+            // 更新数字
+            const counterElement = document.getElementById('dayCounter');
+            if (counterElement) {
+                counterElement.textContent = displayDays;
+                console.log('📅 陪伴天数更新:', displayDays, '(配置文件: config.js)');
+            }
+
+            // 更新文本（从配置中读取）
+            const counterTextElement = document.getElementById('counterText');
+            if (counterTextElement) {
+                let counterText = '天的江湖情缘'; // 默认值
+
+                // 尝试从USER_SIMPLE_CONFIG读取
+                if (typeof USER_SIMPLE_CONFIG !== 'undefined' &&
+                    USER_SIMPLE_CONFIG.texts &&
+                    USER_SIMPLE_CONFIG.texts.pages &&
+                    USER_SIMPLE_CONFIG.texts.pages.counterText) {
+                    counterText = USER_SIMPLE_CONFIG.texts.pages.counterText;
+                }
+                // 尝试从WEBSITE_CONFIG读取
+                else if (typeof WEBSITE_CONFIG !== 'undefined' &&
+                         WEBSITE_CONFIG.uiText &&
+                         WEBSITE_CONFIG.uiText.pages &&
+                         WEBSITE_CONFIG.uiText.pages.about &&
+                         WEBSITE_CONFIG.uiText.pages.about.elements &&
+                         WEBSITE_CONFIG.uiText.pages.about.elements.counterText) {
+                    counterText = WEBSITE_CONFIG.uiText.pages.about.elements.counterText;
+                }
+
+                counterTextElement.textContent = counterText;
+                console.log('📝 计数器文本更新:', counterText);
+            }
+        }
+        
+        // 加载故事内容
+        function loadStories() {
+            const stories = WEBSITE_CONFIG.userCustomization.stories;
+            const storyContainer = document.querySelector('.story-container');
+
+            // 找到陪伴计数器后面的位置
+            const counterSection = document.querySelector('.counter-section');
+
+            // 清除现有的故事内容（保留计数器）
+            const existingStories = storyContainer.querySelectorAll('.story-section');
+            existingStories.forEach(story => story.remove());
+
+            // 添加新的故事内容
+            stories.forEach(story => {
+                const storyElement = document.createElement('div');
+                storyElement.className = 'story-section';
+                storyElement.innerHTML = `
+                    <h3 class="story-title">${story.title}</h3>
+                    <div class="story-content">${story.content}</div>
+                    <div class="story-poem">${story.poem}</div>
+                `;
+                storyContainer.appendChild(storyElement);
+            });
+        }
+
+        // 初始化农历显示模块
+        function initLunarCalendarModule() {
+            try {
+                // 从config.js获取农历显示配置
+                const lunarConfig = ConfigManager ? ConfigManager.get('lunarCalendar', {}) : USER_SIMPLE_CONFIG.lunarCalendar || {};
+
+                // 创建农历显示模块实例
+                lunarCalendarModule = new LunarCalendarModule(lunarConfig);
+
+                // 初始化模块
+                const result = lunarCalendarModule.init();
+
+                if (result.success) {
+                    console.log('✅ 农历显示模块启动成功');
+                } else {
+                    console.warn('⚠️ 农历显示模块启动失败:', result.message);
+                }
+
+                return result;
+
+            } catch (error) {
+                console.error('❌ 农历显示模块初始化异常:', error);
+                return { success: false, error: error.message };
+            }
+        }
+
+        // 初始化模块管理器和所有模块
+        function initModuleManager() {
+            try {
+                console.log('🔧 开始配置模块管理器...');
+
+                // 注册时间显示模块
+                moduleManager.register('timeDisplay', TimeDisplayModule, {
+                    config: ConfigManager ? ConfigManager.get('timeDisplay', {}) : USER_SIMPLE_CONFIG.timeDisplay || {},
+                    autoInit: true,
+                    priority: 10,
+                    initDelay: 100 // 延迟100ms确保配置已加载
+                });
+
+                // 注册农历显示模块
+                moduleManager.register('lunarCalendar', LunarCalendarModule, {
+                    config: ConfigManager ? ConfigManager.get('lunarCalendar', {}) : USER_SIMPLE_CONFIG.lunarCalendar || {},
+                    autoInit: true,
+                    priority: 5,
+                    initDelay: 200 // 延迟200ms确保lunar库已加载
+                });
+
+                // 初始化所有模块
+                moduleManager.initAllModules().then(() => {
+                    // 获取模块实例
+                    timeDisplayModule = moduleManager.getInstance('timeDisplay');
+                    lunarCalendarModule = moduleManager.getInstance('lunarCalendar');
+
+                    console.log('✅ 所有模块通过管理器初始化完成');
+                }).catch(error => {
+                    console.error('❌ 模块管理器初始化失败:', error);
+                });
+
+            } catch (error) {
+                console.error('❌ 模块管理器配置失败:', error);
+            }
+        }
+
+        // 🚀 预加载脚本：立即隐藏页面防止闪烁
+        (function() {
+            document.documentElement.style.visibility = 'hidden';
+            document.documentElement.style.opacity = '0';
+
+            // 🛡️ 安全机制：3秒后强制显示页面（防止JS失败）
+            setTimeout(function() {
+                if (!document.documentElement.classList.contains('loaded')) {
+                    console.warn('⚠️ 页面初始化超时，强制显示页面');
+                    document.documentElement.classList.add('force-show');
+                }
+            }, 3000);
+        })();
+
+        // 页面加载完成后初始化
+        document.addEventListener('DOMContentLoaded', function() {
+            console.log('📋 情缘志页面DOM加载完成');
+
+            // 检查必要的依赖
+            if (typeof TimeDisplayModule === 'undefined') {
+                console.error('❌ TimeDisplayModule未定义');
+            }
+            if (typeof LunarCalendarModule === 'undefined') {
+                console.error('❌ LunarCalendarModule未定义');
+            }
+            if (typeof moduleManager === 'undefined') {
+                console.error('❌ moduleManager未定义，请检查module-manager.js是否正确加载');
+            }
+
+            // 使用公共初始化模块
+            if (typeof initPageCommon === 'function') {
+                initPageCommon('情缘志页面');
+            } else {
+                console.error('❌ initPageCommon函数未找到，请检查common-init.js是否正确加载');
+            }
+
+            // 直接执行初始化（不依赖回调）
+            setTimeout(() => {
+                updateDayCounter();
+                loadStories();
+
+                // 检查模块管理器是否可用
+                if (typeof moduleManager !== 'undefined') {
+                    // 使用模块管理器初始化所有模块
+                    initModuleManager();
+                } else {
+                    // 降级方案：直接初始化模块
+                    console.warn('⚠️ 模块管理器不可用，使用降级方案');
+                    if (typeof TimeDisplayModule !== 'undefined') {
+                        try {
+                            timeDisplayModule = new TimeDisplayModule();
+                            timeDisplayModule.init();
+                            console.log('✅ 时间模块降级初始化成功');
+                        } catch (error) {
+                            console.error('❌ 时间模块降级初始化失败:', error);
+                        }
+                    }
+
+                    if (typeof LunarCalendarModule !== 'undefined') {
+                        try {
+                            lunarCalendarModule = new LunarCalendarModule();
+                            lunarCalendarModule.init();
+                            console.log('✅ 农历模块降级初始化成功');
+                        } catch (error) {
+                            console.error('❌ 农历模块降级初始化失败:', error);
+                        }
+                    }
+                }
+
+                // 每小时更新一次计数器（确保跨日期时及时更新）
+                setInterval(updateDayCounter, 3600000); // 1小时 = 3600000毫秒
+
+                // 监听配置更新事件，重新初始化模块
+                window.addEventListener('userConfigUpdated', function(event) {
+                    console.log('🔄 检测到配置更新，重新初始化模块');
+
+                    if (typeof moduleManager !== 'undefined') {
+                        // 销毁所有模块
+                        moduleManager.destroyAllModules().then(() => {
+                            // 重新初始化模块管理器
+                            setTimeout(() => {
+                                initModuleManager();
+                            }, 100);
+                        }).catch(error => {
+                            console.error('❌ 模块重新初始化失败:', error);
+                        });
+                    }
+                });
+            }, 200); // 增加延迟确保所有脚本加载完成
+
+            // 添加页面特定的初始化逻辑
+            if (typeof addPageInitCallback === 'function') {
+                addPageInitCallback(() => {
+                    // 可以添加其他初始化逻辑
+                }, '情缘志特有功能初始化');
+            }
+
+            console.log('✅ 情缘志页面初始化完成！');
+
+            // 🎨 页面初始化完成，显示页面（防止闪烁）
+            setTimeout(() => {
+                document.documentElement.classList.add('loaded');
+                document.documentElement.style.visibility = 'visible';
+                document.documentElement.style.opacity = '1';
+                console.log('🎨 页面渲染完成，防闪烁处理结束');
+            }, 100); // 短暂延迟确保所有内容都已更新
+        });
+
+        // 🔧 全局函数：供用户测试整点特效
+        window.testHourlyEffect = function() {
+            if (timeDisplayModule) {
+                timeDisplayModule.testHourlyEffect();
+            } else {
+                console.warn('⚠️ 时间显示模块未初始化');
+            }
+        };
+
+        // 🔧 全局函数：获取时间模块信息
+        window.getTimeModuleInfo = function() {
+            const timeModule = moduleManager.getInstance('timeDisplay');
+            if (timeModule) {
+                return timeModule.getCurrentTimeInfo();
+            } else {
+                console.warn('⚠️ 时间显示模块未初始化');
+                return null;
+            }
+        };
+
+        // 🔧 全局函数：获取农历信息
+        window.getLunarInfo = function() {
+            const lunarModule = moduleManager.getInstance('lunarCalendar');
+            if (lunarModule) {
+                return lunarModule.getCurrentLunarInfo();
+            } else {
+                console.warn('⚠️ 农历显示模块未初始化');
+                return null;
+            }
+        };
+
+        // 🔧 全局函数：获取模块管理器状态
+        window.getModuleManagerStatus = function() {
+            return {
+                isInitialized: moduleManager.isInitialized,
+                moduleStates: moduleManager.getAllModuleStates(),
+                initOrder: moduleManager.initOrder
+            };
+        };
+
+        // 🔧 全局函数：手动初始化模块
+        window.initModule = function(moduleName, config = {}) {
+            return moduleManager.initModule(moduleName, config);
+        };
+
+        // 🔧 全局函数：手动销毁模块
+        window.destroyModule = function(moduleName) {
+            return moduleManager.destroyModule(moduleName);
+        };
+
+        // 🔧 全局函数：注册新模块（供二次开发使用）
+        window.registerModule = function(name, moduleClass, options = {}) {
+            return moduleManager.register(name, moduleClass, options);
+        };
+
+        // 🔧 全局函数：获取模块实例（供二次开发使用）
+        window.getModuleInstance = function(moduleName) {
+            return moduleManager.getInstance(moduleName);
+        };
+    </script>
+</body>
+</html>

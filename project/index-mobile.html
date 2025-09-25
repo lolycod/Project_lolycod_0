@@ -1,0 +1,571 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+    <title>⚔️ 江湖情缘 - 武侠风格回忆录 ⚔️</title>
+    
+    <!-- 🚀 移动端优化：内联关键CSS -->
+    <style>
+        /* 🚀 防止页面闪烁的预加载样式 */
+        html {
+            visibility: hidden;
+            opacity: 0;
+        }
+        
+        html.loaded {
+            visibility: visible;
+            opacity: 1;
+            transition: opacity 0.3s ease-in-out;
+        }
+        
+        /* 🛡️ 安全机制：3秒后强制显示页面 */
+        html.force-show {
+            visibility: visible !important;
+            opacity: 1 !important;
+        }
+        
+        /* 移动端优化的基础样式 */
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+        
+        body {
+            background: linear-gradient(135deg, #8B0000 0%, #DAA520 50%, #2F4F2F 100%);
+            min-height: 100vh;
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            color: #F5DEB3;
+            overflow-x: hidden;
+            -webkit-overflow-scrolling: touch;
+        }
+        
+        /* 背景图片懒加载 */
+        .bg-loaded {
+            background-image: url('1/brk/微信图片_20250713234756.jpg');
+            background-size: cover;
+            background-position: center;
+            background-attachment: scroll; /* 移动端优化 */
+        }
+        
+        .container {
+            max-width: 100%;
+            padding: 10px;
+            margin: 0 auto;
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+        }
+        
+        /* 简化的导航栏 */
+        .navbar {
+            background: rgba(0, 0, 0, 0.8);
+            padding: 10px;
+            position: sticky;
+            top: 0;
+            z-index: 1000;
+            backdrop-filter: blur(10px);
+        }
+        
+        .navbar-nav {
+            display: flex;
+            justify-content: space-around;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 10px;
+        }
+        
+        .nav-link {
+            color: #FFD700;
+            text-decoration: none;
+            padding: 8px 12px;
+            border-radius: 5px;
+            font-size: 0.9rem;
+            transition: background-color 0.2s;
+        }
+        
+        .nav-link:hover, .nav-link.active {
+            background: rgba(255, 215, 0, 0.2);
+        }
+        
+        /* 主要内容区域 */
+        .main-content {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            padding: 20px 10px;
+            text-align: center;
+        }
+        
+        .hero-section {
+            margin-bottom: 40px;
+        }
+        
+        .hero-title {
+            color: #FFD700;
+            font-size: 2rem;
+            margin-bottom: 10px;
+            text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.5);
+        }
+        
+        .hero-subtitle {
+            color: #F5DEB3;
+            font-size: 1.1rem;
+            margin-bottom: 30px;
+            opacity: 0.9;
+        }
+        
+        /* 盲盒样式 */
+        .blindbox-container {
+            margin: 30px 0;
+        }
+        
+        .blindbox-main {
+            width: 200px;
+            height: 200px;
+            background: linear-gradient(45deg, #8B4513, #DAA520);
+            border-radius: 20px;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            cursor: pointer;
+            transition: transform 0.2s, box-shadow 0.2s;
+            box-shadow: 0 8px 25px rgba(0, 0, 0, 0.3);
+            margin: 0 auto;
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .blindbox-main:active {
+            transform: scale(0.95);
+        }
+        
+        .blindbox-main::before {
+            content: '';
+            position: absolute;
+            top: -50%;
+            left: -50%;
+            width: 200%;
+            height: 200%;
+            background: linear-gradient(45deg, transparent, rgba(255, 255, 255, 0.1), transparent);
+            transform: rotate(45deg);
+            animation: shine 3s infinite;
+        }
+        
+        @keyframes shine {
+            0% { transform: translateX(-100%) translateY(-100%) rotate(45deg); }
+            50% { transform: translateX(100%) translateY(100%) rotate(45deg); }
+            100% { transform: translateX(-100%) translateY(-100%) rotate(45deg); }
+        }
+        
+        .blindbox-icon {
+            font-size: 3rem;
+            margin-bottom: 10px;
+            color: #FFD700;
+            text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.5);
+        }
+        
+        .blindbox-text {
+            color: #F5DEB3;
+            font-size: 1.1rem;
+            font-weight: bold;
+            text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.5);
+        }
+        
+        .blindbox-subtitle {
+            color: #F5DEB3;
+            font-size: 0.9rem;
+            margin-top: 20px;
+            opacity: 0.8;
+        }
+        
+        /* 结果弹窗 */
+        .result-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.8);
+            display: none;
+            justify-content: center;
+            align-items: center;
+            z-index: 2000;
+            padding: 20px;
+        }
+        
+        .result-content {
+            background: linear-gradient(135deg, #2F4F2F, #8B0000);
+            border-radius: 20px;
+            padding: 20px;
+            max-width: 90%;
+            max-height: 80%;
+            text-align: center;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
+            position: relative;
+            overflow-y: auto;
+        }
+        
+        .result-image {
+            max-width: 100%;
+            max-height: 300px;
+            border-radius: 15px;
+            margin-bottom: 15px;
+            object-fit: cover;
+        }
+        
+        .result-title {
+            color: #FFD700;
+            font-size: 1.3rem;
+            margin-bottom: 10px;
+        }
+        
+        .result-description {
+            color: #F5DEB3;
+            line-height: 1.5;
+            margin-bottom: 15px;
+        }
+        
+        .result-poem {
+            color: #87CEEB;
+            font-style: italic;
+            border-top: 1px solid rgba(255, 255, 255, 0.2);
+            padding-top: 15px;
+        }
+        
+        .close-btn {
+            position: absolute;
+            top: 10px;
+            right: 15px;
+            background: none;
+            border: none;
+            color: #FFD700;
+            font-size: 1.5rem;
+            cursor: pointer;
+            width: 30px;
+            height: 30px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        
+        /* 简化的页脚 */
+        .footer {
+            background: rgba(0, 0, 0, 0.8);
+            color: #F5DEB3;
+            text-align: center;
+            padding: 15px 10px;
+            font-size: 0.9rem;
+        }
+        
+        /* 加载动画 */
+        .loading {
+            display: inline-block;
+            width: 20px;
+            height: 20px;
+            border: 3px solid rgba(255, 255, 255, 0.3);
+            border-radius: 50%;
+            border-top-color: #FFD700;
+            animation: spin 1s ease-in-out infinite;
+        }
+        
+        @keyframes spin {
+            to { transform: rotate(360deg); }
+        }
+        
+        /* 移动端响应式优化 */
+        @media (max-width: 480px) {
+            .hero-title {
+                font-size: 1.6rem;
+            }
+            
+            .hero-subtitle {
+                font-size: 1rem;
+            }
+            
+            .blindbox-main {
+                width: 160px;
+                height: 160px;
+            }
+            
+            .blindbox-icon {
+                font-size: 2.5rem;
+            }
+            
+            .blindbox-text {
+                font-size: 1rem;
+            }
+            
+            .container {
+                padding: 5px;
+            }
+            
+            .main-content {
+                padding: 15px 5px;
+            }
+        }
+        
+        @media (max-width: 360px) {
+            .blindbox-main {
+                width: 140px;
+                height: 140px;
+            }
+            
+            .blindbox-icon {
+                font-size: 2rem;
+            }
+        }
+        
+        /* 减少动画复杂度（慢速网络） */
+        @media (prefers-reduced-motion: reduce) {
+            *, *::before, *::after {
+                animation-duration: 0.01ms !important;
+                animation-iteration-count: 1 !important;
+                transition-duration: 0.01ms !important;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- 简化的导航栏 -->
+    <nav class="navbar">
+        <div class="navbar-nav">
+            <a href="index.html" class="nav-link active">🏠 首页</a>
+            <a href="memories.html" class="nav-link">📸 回忆录</a>
+            <a href="about.html" class="nav-link">ℹ️ 关于</a>
+        </div>
+    </nav>
+
+    <!-- 主要内容 -->
+    <div class="container">
+        <div class="main-content">
+            <!-- 英雄区域 -->
+            <div class="hero-section">
+                <h1 class="hero-title" id="heroTitle">🏮 江湖情缘 🏮</h1>
+                <p class="hero-subtitle" id="heroSubtitle">武侠风格回忆录</p>
+            </div>
+
+            <!-- 盲盒区域 -->
+            <div class="blindbox-container">
+                <div class="blindbox-main" id="blindBoxMain">
+                    <div class="blindbox-icon">📦</div>
+                    <div class="blindbox-text" id="blindBoxText">开启宝箱</div>
+                </div>
+                <p class="blindbox-subtitle" id="blindBoxSubtitle">发现我们的珍贵回忆</p>
+            </div>
+        </div>
+    </div>
+
+    <!-- 结果弹窗 -->
+    <div class="result-overlay" id="blindBoxResult">
+        <div class="result-content">
+            <button class="close-btn" onclick="closeResult()">&times;</button>
+            <img class="result-image" id="resultImage" alt="回忆照片">
+            <h3 class="result-title" id="resultTitle">标题</h3>
+            <p class="result-description" id="resultDescription">描述</p>
+            <p class="result-poem" id="resultPoem">诗句</p>
+        </div>
+    </div>
+
+    <!-- 简化的页脚 -->
+    <footer class="footer">
+        <p>🏮 以武侠风格记录，传承江湖情缘 🏮</p>
+        <p style="margin: 0; font-size: 0.7rem; color: #DAA520; opacity: 0.8;">作者：lolycod</p>
+    </footer>
+
+    <!-- 🚀 预加载脚本：立即隐藏页面防止闪烁 -->
+    <script>
+        (function() {
+            window.pageLoadStart = performance.now();
+            document.documentElement.style.visibility = 'hidden';
+            document.documentElement.style.opacity = '0';
+            
+            // 🛡️ 安全机制：3秒后强制显示页面
+            setTimeout(function() {
+                if (!document.documentElement.classList.contains('loaded')) {
+                    console.warn('⚠️ 首页初始化超时，强制显示页面');
+                    document.documentElement.classList.add('force-show');
+                }
+            }, 3000);
+        })();
+    </script>
+
+    <!-- 核心脚本（内联以减少请求） -->
+    <script>
+        // 简化的配置对象（内联关键配置）
+        const MOBILE_CONFIG = {
+            website: {
+                title: '柒柒和月月',
+                subtitle: '恋与燕云',
+                heroName: '柒柒'
+            },
+            texts: {
+                pages: {
+                    blindBoxSubtitle: '发现我们的珍贵回忆'
+                },
+                buttons: {
+                    blindBox: '开启宝箱'
+                }
+            },
+            photos: [
+                {
+                    file: '微信图片_20250710215816.jpg',
+                    title: '初遇江湖',
+                    description: '江湖初遇，一见倾心，从此我心中只有柒柒一人。',
+                    poem: '初见倾城色，再见倾城心'
+                },
+                {
+                    file: '微信图片_20250710215822.jpg',
+                    title: '携手同行',
+                    description: '与柒柒携手走过的每一个日子，都是我最珍贵的回忆。',
+                    poem: '执子之手，与子偕老'
+                }
+            ]
+        };
+
+        // 生成图片数据
+        function generateImageData() {
+            return MOBILE_CONFIG.photos.map(photo => ({
+                src: '1/images/' + photo.file,
+                title: photo.title,
+                description: photo.description,
+                poem: photo.poem
+            }));
+        }
+
+        // 盲盒功能
+        function openBlindBox() {
+            try {
+                const images = generateImageData();
+                if (!images || images.length === 0) {
+                    alert('暂无图片数据，请检查配置');
+                    return;
+                }
+                
+                const randomIndex = Math.floor(Math.random() * images.length);
+                const selectedImage = images[randomIndex];
+                
+                // 更新结果内容
+                document.getElementById('resultImage').src = selectedImage.src;
+                document.getElementById('resultTitle').textContent = selectedImage.title;
+                document.getElementById('resultDescription').textContent = selectedImage.description;
+                document.getElementById('resultPoem').textContent = selectedImage.poem;
+                
+                // 显示结果
+                document.getElementById('blindBoxResult').style.display = 'flex';
+                
+                console.log('🎲 盲盒开启:', selectedImage.title);
+            } catch (error) {
+                console.error('❌ 盲盒开启失败:', error);
+                alert('盲盒开启失败，请重试');
+            }
+        }
+
+        // 关闭结果
+        function closeResult() {
+            document.getElementById('blindBoxResult').style.display = 'none';
+        }
+
+        // 更新UI文本
+        function updateUIText() {
+            try {
+                const elements = {
+                    'heroTitle': `🏮 ${MOBILE_CONFIG.website.title} 🏮`,
+                    'heroSubtitle': MOBILE_CONFIG.website.subtitle,
+                    'blindBoxText': MOBILE_CONFIG.texts.buttons.blindBox,
+                    'blindBoxSubtitle': MOBILE_CONFIG.texts.pages.blindBoxSubtitle
+                };
+                
+                Object.keys(elements).forEach(id => {
+                    const element = document.getElementById(id);
+                    if (element && elements[id]) {
+                        element.textContent = elements[id];
+                    }
+                });
+                
+                console.log('✅ UI文本更新完成');
+            } catch (error) {
+                console.error('❌ UI文本更新失败:', error);
+            }
+        }
+
+        // 延迟加载背景图片
+        function loadBackgroundImage() {
+            const img = new Image();
+            img.onload = function() {
+                document.body.classList.add('bg-loaded');
+                console.log('✅ 背景图片加载完成');
+            };
+            img.onerror = function() {
+                console.warn('⚠️ 背景图片加载失败，使用渐变背景');
+            };
+            img.src = '1/brk/微信图片_20250713234756.jpg';
+        }
+
+        // 预加载关键图片
+        function preloadImages() {
+            const images = generateImageData();
+            images.slice(0, 2).forEach(img => { // 只预加载前2张
+                const preloadImg = new Image();
+                preloadImg.src = img.src;
+            });
+            console.log('✅ 关键图片预加载完成');
+        }
+
+        // 主初始化函数
+        function initMobilePage() {
+            console.log('📱 移动端首页初始化开始');
+            
+            // 更新UI文本
+            updateUIText();
+            
+            // 绑定盲盒事件
+            const blindBoxMain = document.getElementById('blindBoxMain');
+            if (blindBoxMain) {
+                blindBoxMain.addEventListener('click', openBlindBox);
+                console.log('✅ 盲盒点击事件绑定成功');
+            }
+            
+            // 绑定结果关闭事件
+            const resultContainer = document.getElementById('blindBoxResult');
+            if (resultContainer) {
+                resultContainer.addEventListener('click', function(e) {
+                    if (e.target === resultContainer) {
+                        closeResult();
+                    }
+                });
+            }
+            
+            // 延迟加载背景图片
+            setTimeout(loadBackgroundImage, 300);
+            
+            // 预加载关键图片
+            setTimeout(preloadImages, 800);
+            
+            // 显示页面
+            setTimeout(() => {
+                document.documentElement.classList.add('loaded');
+                document.documentElement.style.visibility = 'visible';
+                document.documentElement.style.opacity = '1';
+                
+                const loadTime = performance.now() - window.pageLoadStart;
+                console.log(`🎨 移动端首页渲染完成，总耗时: ${loadTime.toFixed(2)}ms`);
+            }, 100);
+        }
+
+        // DOM加载完成后初始化
+        if (document.readyState === 'loading') {
+            document.addEventListener('DOMContentLoaded', initMobilePage);
+        } else {
+            initMobilePage();
+        }
+    </script>
+
+    <!-- 移动端性能优化脚本（异步加载） -->
+    <script async src="mobile-optimization.js"></script>
+</body>
+</html>

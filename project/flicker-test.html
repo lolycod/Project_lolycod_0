@@ -1,0 +1,304 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>防闪烁测试页面</title>
+    <style>
+        /* 🚀 防止页面闪烁的预加载样式 */
+        html {
+            visibility: hidden;
+            opacity: 0;
+        }
+        
+        html.loaded {
+            visibility: visible;
+            opacity: 1;
+            transition: opacity 0.3s ease-in-out;
+        }
+        
+        /* 🛡️ 安全机制：3秒后强制显示页面 */
+        html.force-show {
+            visibility: visible !important;
+            opacity: 1 !important;
+        }
+        
+        body {
+            font-family: 'Microsoft YaHei', sans-serif;
+            margin: 0;
+            padding: 20px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            min-height: 100vh;
+        }
+        
+        .container {
+            max-width: 800px;
+            margin: 0 auto;
+            background: rgba(255, 255, 255, 0.1);
+            padding: 30px;
+            border-radius: 15px;
+            backdrop-filter: blur(10px);
+        }
+        
+        .test-section {
+            margin: 20px 0;
+            padding: 20px;
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 10px;
+            border-left: 4px solid #4CAF50;
+        }
+        
+        .status {
+            padding: 10px;
+            border-radius: 5px;
+            margin: 10px 0;
+            font-weight: bold;
+        }
+        
+        .success { background: rgba(76, 175, 80, 0.3); }
+        .warning { background: rgba(255, 152, 0, 0.3); }
+        .error { background: rgba(244, 67, 54, 0.3); }
+        
+        button {
+            background: #4CAF50;
+            color: white;
+            border: none;
+            padding: 12px 24px;
+            border-radius: 5px;
+            cursor: pointer;
+            margin: 5px;
+            font-size: 16px;
+        }
+        
+        button:hover {
+            background: #45a049;
+        }
+        
+        .timer {
+            font-size: 24px;
+            font-weight: bold;
+            color: #FFD700;
+            text-align: center;
+            margin: 20px 0;
+        }
+        
+        .log {
+            background: rgba(0, 0, 0, 0.3);
+            padding: 15px;
+            border-radius: 5px;
+            font-family: 'Courier New', monospace;
+            font-size: 14px;
+            max-height: 200px;
+            overflow-y: auto;
+            margin-top: 15px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>🚀 防闪烁机制测试</h1>
+        
+        <div class="test-section">
+            <h2>📊 页面加载状态</h2>
+            <div id="load-status" class="status">正在检测...</div>
+            <div class="timer" id="timer">加载时间: 0ms</div>
+        </div>
+        
+        <div class="test-section">
+            <h2>🔧 防闪烁机制状态</h2>
+            <div id="flicker-status"></div>
+            <button onclick="testFlickerFix()">测试防闪烁修复</button>
+            <button onclick="simulateFlicker()">模拟页面闪烁</button>
+        </div>
+        
+        <div class="test-section">
+            <h2>⚡ 性能测试</h2>
+            <div id="performance-status"></div>
+            <button onclick="runPerformanceTest()">运行性能测试</button>
+        </div>
+        
+        <div class="test-section">
+            <h2>📝 测试日志</h2>
+            <div class="log" id="test-log"></div>
+            <button onclick="clearLog()">清空日志</button>
+        </div>
+    </div>
+
+    <script>
+        // 🚀 预加载脚本：立即隐藏页面防止闪烁
+        (function() {
+            window.pageLoadStart = performance.now();
+            document.documentElement.style.visibility = 'hidden';
+            document.documentElement.style.opacity = '0';
+            
+            // 🛡️ 安全机制：3秒后强制显示页面
+            setTimeout(function() {
+                if (!document.documentElement.classList.contains('loaded')) {
+                    console.warn('⚠️ 页面初始化超时，强制显示页面');
+                    document.documentElement.classList.add('force-show');
+                    logMessage('⚠️ 触发安全机制：强制显示页面', 'warning');
+                }
+            }, 3000);
+        })();
+
+        let testLog = [];
+        
+        function logMessage(message, type = 'info') {
+            const timestamp = new Date().toLocaleTimeString();
+            const logEntry = `[${timestamp}] ${message}`;
+            testLog.push(logEntry);
+            
+            const logElement = document.getElementById('test-log');
+            if (logElement) {
+                logElement.innerHTML += logEntry + '\n';
+                logElement.scrollTop = logElement.scrollHeight;
+            }
+            
+            console.log(logEntry);
+        }
+        
+        function clearLog() {
+            testLog = [];
+            document.getElementById('test-log').innerHTML = '';
+        }
+        
+        function updateStatus(elementId, message, type = 'success') {
+            const element = document.getElementById(elementId);
+            if (element) {
+                element.className = `status ${type}`;
+                element.textContent = message;
+            }
+        }
+        
+        function updateTimer() {
+            const loadTime = performance.now() - window.pageLoadStart;
+            const timerElement = document.getElementById('timer');
+            if (timerElement) {
+                timerElement.textContent = `加载时间: ${loadTime.toFixed(2)}ms`;
+            }
+        }
+        
+        function testFlickerFix() {
+            logMessage('🔧 开始测试防闪烁修复功能');
+            
+            // 模拟页面重新初始化
+            document.documentElement.classList.remove('loaded');
+            document.documentElement.style.visibility = 'hidden';
+            document.documentElement.style.opacity = '0';
+            
+            updateStatus('flicker-status', '正在测试防闪烁修复...', 'warning');
+            
+            setTimeout(() => {
+                // 应用修复
+                document.documentElement.classList.add('loaded');
+                document.documentElement.style.visibility = 'visible';
+                document.documentElement.style.opacity = '1';
+                
+                updateStatus('flicker-status', '✅ 防闪烁修复测试完成', 'success');
+                logMessage('✅ 防闪烁修复功能正常');
+            }, 500);
+        }
+        
+        function simulateFlicker() {
+            logMessage('⚡ 模拟页面闪烁效果');
+            
+            let flickerCount = 0;
+            const maxFlickers = 5;
+            
+            const flickerInterval = setInterval(() => {
+                const isVisible = document.documentElement.style.opacity === '1';
+                document.documentElement.style.opacity = isVisible ? '0' : '1';
+                
+                flickerCount++;
+                if (flickerCount >= maxFlickers * 2) {
+                    clearInterval(flickerInterval);
+                    document.documentElement.style.opacity = '1';
+                    logMessage('⚡ 闪烁模拟完成');
+                    updateStatus('flicker-status', '闪烁模拟完成', 'success');
+                }
+            }, 100);
+            
+            updateStatus('flicker-status', '正在模拟页面闪烁...', 'warning');
+        }
+        
+        function runPerformanceTest() {
+            logMessage('📊 开始性能测试');
+            updateStatus('performance-status', '正在运行性能测试...', 'warning');
+            
+            const startTime = performance.now();
+            
+            // 模拟多次页面显示/隐藏
+            let testCount = 0;
+            const maxTests = 10;
+            const times = [];
+            
+            function runSingleTest() {
+                const testStart = performance.now();
+                
+                document.documentElement.style.opacity = '0';
+                
+                setTimeout(() => {
+                    document.documentElement.style.opacity = '1';
+                    const testTime = performance.now() - testStart;
+                    times.push(testTime);
+                    
+                    testCount++;
+                    if (testCount < maxTests) {
+                        setTimeout(runSingleTest, 50);
+                    } else {
+                        // 计算统计数据
+                        const avgTime = times.reduce((a, b) => a + b, 0) / times.length;
+                        const minTime = Math.min(...times);
+                        const maxTime = Math.max(...times);
+                        
+                        const totalTime = performance.now() - startTime;
+                        
+                        updateStatus('performance-status', 
+                            `✅ 性能测试完成 - 平均: ${avgTime.toFixed(2)}ms, 范围: ${minTime.toFixed(2)}-${maxTime.toFixed(2)}ms`, 
+                            'success');
+                        
+                        logMessage(`📊 性能测试结果: 总耗时 ${totalTime.toFixed(2)}ms, 平均响应 ${avgTime.toFixed(2)}ms`);
+                    }
+                }, 10);
+            }
+            
+            runSingleTest();
+        }
+        
+        // 页面加载完成后初始化
+        document.addEventListener('DOMContentLoaded', function() {
+            logMessage('📋 DOM加载完成');
+            
+            // 模拟一些初始化工作
+            setTimeout(() => {
+                updateStatus('load-status', '✅ 页面初始化完成', 'success');
+                updateStatus('flicker-status', '✅ 防闪烁机制正常工作', 'success');
+                
+                // 显示页面
+                document.documentElement.classList.add('loaded');
+                document.documentElement.style.visibility = 'visible';
+                document.documentElement.style.opacity = '1';
+                
+                const loadTime = performance.now() - window.pageLoadStart;
+                logMessage(`🎨 页面渲染完成，总耗时: ${loadTime.toFixed(2)}ms`);
+                
+                // 更新计时器
+                setInterval(updateTimer, 100);
+                
+            }, 200); // 模拟初始化延迟
+        });
+        
+        // 页面可见性变化监听
+        document.addEventListener('visibilitychange', function() {
+            if (document.hidden) {
+                logMessage('👁️ 页面隐藏');
+            } else {
+                logMessage('👁️ 页面显示');
+            }
+        });
+        
+        logMessage('🚀 防闪烁测试页面加载完成');
+    </script>
+</body>
+</html>

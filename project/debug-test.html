@@ -1,0 +1,234 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>江湖情缘 - 调试测试页面</title>
+    <style>
+        body {
+            font-family: 'Microsoft YaHei', sans-serif;
+            margin: 20px;
+            background: #1a1a1a;
+            color: #fff;
+        }
+        .test-section {
+            margin: 20px 0;
+            padding: 15px;
+            border: 1px solid #444;
+            border-radius: 5px;
+            background: #2a2a2a;
+        }
+        .success { color: #4CAF50; }
+        .error { color: #f44336; }
+        .warning { color: #ff9800; }
+        .info { color: #2196F3; }
+        button {
+            background: #4CAF50;
+            color: white;
+            border: none;
+            padding: 10px 15px;
+            margin: 5px;
+            border-radius: 3px;
+            cursor: pointer;
+        }
+        button:hover { background: #45a049; }
+        pre {
+            background: #333;
+            padding: 10px;
+            border-radius: 3px;
+            overflow-x: auto;
+        }
+    </style>
+</head>
+<body>
+    <h1>🔧 江湖情缘系统调试测试</h1>
+    
+    <div class="test-section">
+        <h2>📋 脚本加载检查</h2>
+        <div id="script-check"></div>
+        <button onclick="checkScripts()">检查脚本加载</button>
+    </div>
+    
+    <div class="test-section">
+        <h2>📸 图片数据检查</h2>
+        <div id="image-check"></div>
+        <button onclick="checkImages()">检查图片数据</button>
+    </div>
+    
+    <div class="test-section">
+        <h2>🔧 模块管理器检查</h2>
+        <div id="module-check"></div>
+        <button onclick="checkModules()">检查模块状态</button>
+    </div>
+    
+    <div class="test-section">
+        <h2>⏰ 时间模块测试</h2>
+        <div id="time-check"></div>
+        <button onclick="testTimeModule()">测试时间模块</button>
+    </div>
+    
+    <div class="test-section">
+        <h2>🎲 盲盒功能测试</h2>
+        <div id="blindbox-check"></div>
+        <button onclick="testBlindBox()">测试盲盒功能</button>
+    </div>
+
+    <!-- 引入必要的脚本 -->
+    <script src="config.js"></script>
+    <script src="common-init.js"></script>
+    <script src="module-manager.js"></script>
+
+    <script>
+        function log(elementId, message, type = 'info') {
+            const element = document.getElementById(elementId);
+            const div = document.createElement('div');
+            div.className = type;
+            div.innerHTML = message;
+            element.appendChild(div);
+        }
+
+        function checkScripts() {
+            const checkElement = document.getElementById('script-check');
+            checkElement.innerHTML = '';
+            
+            const checks = [
+                { name: 'USER_SIMPLE_CONFIG', obj: window.USER_SIMPLE_CONFIG },
+                { name: 'WEBSITE_CONFIG', obj: window.WEBSITE_CONFIG },
+                { name: 'generateImageData', obj: window.generateImageData },
+                { name: 'moduleManager', obj: window.moduleManager },
+                { name: 'initPageCommon', obj: window.initPageCommon },
+                { name: 'syncUserSimpleConfig', obj: window.syncUserSimpleConfig }
+            ];
+            
+            checks.forEach(check => {
+                const status = check.obj ? '✅ 已加载' : '❌ 未找到';
+                const type = check.obj ? 'success' : 'error';
+                log('script-check', `${check.name}: ${status}`, type);
+            });
+        }
+
+        function checkImages() {
+            const checkElement = document.getElementById('image-check');
+            checkElement.innerHTML = '';
+            
+            try {
+                if (typeof generateImageData !== 'function') {
+                    log('image-check', '❌ generateImageData函数未找到', 'error');
+                    return;
+                }
+                
+                const images = generateImageData();
+                log('image-check', `✅ 找到 ${images.length} 张图片`, 'success');
+                
+                images.forEach((img, index) => {
+                    log('image-check', `图片 ${index + 1}: ${img.src} - ${img.title}`, 'info');
+                });
+                
+                // 检查USER_SIMPLE_CONFIG中的photos
+                if (USER_SIMPLE_CONFIG && USER_SIMPLE_CONFIG.photos) {
+                    log('image-check', `✅ USER_SIMPLE_CONFIG.photos 包含 ${USER_SIMPLE_CONFIG.photos.length} 张图片`, 'success');
+                } else {
+                    log('image-check', '❌ USER_SIMPLE_CONFIG.photos 未找到', 'error');
+                }
+                
+            } catch (error) {
+                log('image-check', `❌ 图片检查失败: ${error.message}`, 'error');
+            }
+        }
+
+        function checkModules() {
+            const checkElement = document.getElementById('module-check');
+            checkElement.innerHTML = '';
+            
+            try {
+                if (typeof moduleManager === 'undefined') {
+                    log('module-check', '❌ moduleManager 未定义', 'error');
+                    return;
+                }
+                
+                const status = moduleManager.getAllModuleStates();
+                log('module-check', '✅ 模块管理器可用', 'success');
+                
+                Object.keys(status).forEach(moduleName => {
+                    const moduleStatus = status[moduleName];
+                    const statusText = `${moduleName}: ${moduleStatus.state}`;
+                    const type = moduleStatus.state === 'initialized' ? 'success' : 
+                                moduleStatus.state === 'error' ? 'error' : 'warning';
+                    log('module-check', statusText, type);
+                });
+                
+            } catch (error) {
+                log('module-check', `❌ 模块检查失败: ${error.message}`, 'error');
+            }
+        }
+
+        function testTimeModule() {
+            const checkElement = document.getElementById('time-check');
+            checkElement.innerHTML = '';
+            
+            try {
+                // 检查TimeDisplayModule类是否存在
+                if (typeof TimeDisplayModule === 'undefined') {
+                    log('time-check', '❌ TimeDisplayModule 类未定义', 'error');
+                    return;
+                }
+                
+                // 尝试创建时间模块实例
+                const timeModule = new TimeDisplayModule();
+                const result = timeModule.init();
+                
+                if (result.success) {
+                    log('time-check', '✅ 时间模块初始化成功', 'success');
+                    
+                    // 测试获取时间信息
+                    const timeInfo = timeModule.getCurrentTimeInfo();
+                    if (timeInfo) {
+                        log('time-check', `当前时间: ${timeInfo.formatted}`, 'info');
+                    }
+                } else {
+                    log('time-check', `❌ 时间模块初始化失败: ${result.error}`, 'error');
+                }
+                
+            } catch (error) {
+                log('time-check', `❌ 时间模块测试失败: ${error.message}`, 'error');
+            }
+        }
+
+        function testBlindBox() {
+            const checkElement = document.getElementById('blindbox-check');
+            checkElement.innerHTML = '';
+            
+            try {
+                // 检查openBlindBox函数是否存在
+                if (typeof openBlindBox === 'undefined') {
+                    log('blindbox-check', '❌ openBlindBox 函数未定义', 'error');
+                    log('blindbox-check', '这个函数应该在index.html中定义', 'warning');
+                    return;
+                }
+                
+                log('blindbox-check', '✅ openBlindBox 函数已定义', 'success');
+                
+                // 检查图片数据
+                const images = generateImageData();
+                if (images && images.length > 0) {
+                    log('blindbox-check', `✅ 盲盒有 ${images.length} 张图片可用`, 'success');
+                } else {
+                    log('blindbox-check', '❌ 盲盒没有可用图片', 'error');
+                }
+                
+            } catch (error) {
+                log('blindbox-check', `❌ 盲盒功能测试失败: ${error.message}`, 'error');
+            }
+        }
+
+        // 页面加载时自动检查
+        window.addEventListener('DOMContentLoaded', function() {
+            setTimeout(() => {
+                checkScripts();
+                checkImages();
+                checkModules();
+            }, 1000);
+        });
+    </script>
+</body>
+</html>
